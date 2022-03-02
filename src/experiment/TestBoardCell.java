@@ -13,27 +13,27 @@ public class TestBoardCell {
 		this.column = column;
 	}
 	
-	void addAdjacency(TestBoardCell cell) {
+	public void addAdjacency(TestBoardCell cell) {
 		adjacencies.add(cell);
 	}
 	
-	Set<TestBoardCell> getAdjList() {
+	public Set<TestBoardCell> getAdjList() {
 		return adjacencies;
 	}
 	
-	void setRoom(boolean isRoom) {
+	public void setRoom(boolean isRoom) {
 		this.isRoom = isRoom;
 	}
 	
-	boolean isRoom() {
+	public boolean isRoom() {
 		return isRoom;
 	}
 	
-	void setOccupied(boolean isOccupied) {
+	public void setOccupied(boolean isOccupied) {
 		this.isOccupied = isOccupied;
 	}
 	
-	boolean isOccupied() {
+	public boolean isOccupied() {
 		return isOccupied;
 	}
 }
