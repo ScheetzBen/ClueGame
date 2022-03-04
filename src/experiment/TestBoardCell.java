@@ -18,7 +18,7 @@ public class TestBoardCell {
 	}
 	
 	public Set<TestBoardCell> getAdjList() {
-		return null;
+		return new HashSet<TestBoardCell>();
 	}
 	
 	public void setRoom(boolean isRoom) {

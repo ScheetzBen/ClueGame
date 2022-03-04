@@ -18,6 +18,6 @@ public class TestBoard {
 	}
 	
 	public TestBoardCell getCell(int row, int col) {
-		return null;
+		return new TestBoardCell(0,0);
 	}
 }
