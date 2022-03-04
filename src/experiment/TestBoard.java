@@ -44,6 +44,7 @@ public class TestBoard {
 			visited.add(i);
 			if (pathlength == 1) targets.add(i);
 			else calcTargets(i, pathlength - 1);
+			visited.remove(i);
 		}
 	}
 	
