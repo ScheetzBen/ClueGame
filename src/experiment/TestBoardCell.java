@@ -18,6 +18,11 @@ public class TestBoardCell {
 	}
 	
 	public Set<TestBoardCell> getAdjList() {
+		if ((row - 1) >= 0) this.addAdjacency(new TestBoardCell(row - 1, column));
+		if ((row + 1) <= TestBoard.ROWS) this.addAdjacency(new TestBoardCell(row + 1, column));
+		if ((column - 1) >= 0) this.addAdjacency(new TestBoardCell(row, column - 1));
+		if ((column + 1) >= TestBoard.COLS) this.addAdjacency(new TestBoardCell(row, column + 1));
+		
 		return adjacencies;
 	}
 	
@@ -25,13 +30,13 @@ public class TestBoardCell {
 		this.isRoom = isRoom;
 	}
 	
-	public int getRow() {
-		return row;
-	}
-
-	public int getColumn() {
-		return column;
-	}
+//	public int getRow() {
+//		return row;
+//	}
+//
+//	public int getColumn() {
+//		return column;
+//	}
 
 	public boolean isRoom() {
 		return isRoom;
