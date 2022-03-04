@@ -18,13 +18,21 @@ public class TestBoardCell {
 	}
 	
 	public Set<TestBoardCell> getAdjList() {
-		return new HashSet<TestBoardCell>();
+		return adjacencies;
 	}
 	
 	public void setRoom(boolean isRoom) {
 		this.isRoom = isRoom;
 	}
 	
+	public int getRow() {
+		return row;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
 	public boolean isRoom() {
 		return isRoom;
 	}

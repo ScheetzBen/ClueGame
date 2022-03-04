@@ -5,8 +5,10 @@ import java.io.FileReader;
 import java.util.*;
 
 public class TestBoard {
-	Set<TestBoardCell> board = new HashSet<TestBoardCell>();
-	private static int ROWS = 26, COLUMNS = 23;
+	private TestBoardCell[][] grid;
+	private Set<TestBoardCell> targets = new HashSet<TestBoardCell>();
+	private Set<TestBoardCell> visited = new HashSet<TestBoardCell>();
+	private static int ROWS = 4, COLS = 4;
 	
 	public TestBoard() {
 		super();
@@ -30,7 +32,19 @@ public class TestBoard {
 	}
 	
 	public void calcTargets(TestBoardCell startCell, int pathlength) {
-		return;
+		startCell.addAdjacency(new TestBoardCell(startCell.getRow() - 1, startCell.getColumn()));
+		startCell.addAdjacency(new TestBoardCell(startCell.getRow() + 1, startCell.getColumn()));
+		startCell.addAdjacency(new TestBoardCell(startCell.getRow(), startCell.getColumn() - 1));
+		startCell.addAdjacency(new TestBoardCell(startCell.getRow(), startCell.getColumn() + 1));
+
+		for (TestBoardCell i : startCell.getAdjList()) {
+			for (TestBoardCell j : visited) {
+				if (i == j) break;
+			}
+			visited.add(i);
+			if (pathlength == 1) targets.add(i);
+			else calcTargets(i, pathlength - 1);
+		}
 	}
 	
 	public Set<TestBoardCell> getTargets() {
