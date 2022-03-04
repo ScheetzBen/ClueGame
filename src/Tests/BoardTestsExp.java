@@ -93,7 +93,7 @@ public class BoardTestsExp {
 		
 	}
 	//Test that checks 
-	
+	@Test
 	public void testTargetsMixed() {
 		board.getCell(0, 2).setOccupied(true);
 		board.getCell(1, 2).setRoom(true);
@@ -121,6 +121,7 @@ public class BoardTestsExp {
 		board.getCell(3, 1).setOccupied(false);
 		board.getCell(1, 1).setRoom(false);
 	}
+	
 	@Test
 	public void testOccupied() {
 		board.getCell(0, 3).setOccupied(true);
@@ -150,6 +151,7 @@ public class BoardTestsExp {
 		
 	}
 	
+	@Test
 	public void testRooms() {
 		board.getCell(0,1).setRoom(true);
 		TestBoardCell cell = board.getCell(0, 0);
@@ -168,7 +170,5 @@ public class BoardTestsExp {
 
 		
 	}
-
-
 }
 
