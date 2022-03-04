@@ -1,10 +1,10 @@
 package experiment;
 
-import java.util.Set;
+import java.util.*;
 
 public class TestBoardCell {
 	private int row, column;
-	private Set<TestBoardCell> adjacencies;
+	private Set<TestBoardCell> adjacencies = new HashSet<TestBoardCell>();
 	private boolean isRoom = false, isOccupied = false;
 	
 	public TestBoardCell(int row, int column) {
@@ -18,7 +18,7 @@ public class TestBoardCell {
 	}
 	
 	public Set<TestBoardCell> getAdjList() {
-		return adjacencies;
+		return null;
 	}
 	
 	public void setRoom(boolean isRoom) {
