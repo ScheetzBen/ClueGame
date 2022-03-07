@@ -18,10 +18,14 @@ public class TestBoardCell {
 	}
 	
 	public Set<TestBoardCell> getAdjList() {
-		if ((row - 1) >= 0) this.addAdjacency(new TestBoardCell(row - 1, column));
-		if ((row + 1) <= TestBoard.ROWS) this.addAdjacency(new TestBoardCell(row + 1, column));
-		if ((column - 1) >= 0) this.addAdjacency(new TestBoardCell(row, column - 1));
-		if ((column + 1) >= TestBoard.COLS) this.addAdjacency(new TestBoardCell(row, column + 1));
+//		if ((row - 1) >= 0) this.addAdjacency(new TestBoardCell(row - 1, column));
+//		if ((row + 1) <= TestBoard.ROWS) this.addAdjacency(new TestBoardCell(row + 1, column));
+//		if ((column - 1) >= 0) this.addAdjacency(new TestBoardCell(row, column - 1));
+//		if ((column + 1) <= TestBoard.COLS) this.addAdjacency(new TestBoardCell(row, column + 1));
+		
+//		for (TestBoardCell i : adjacencies) {
+//			System.out.println(i.row + " " + i.column);
+//		}
 		
 		return adjacencies;
 	}
@@ -30,13 +34,13 @@ public class TestBoardCell {
 		this.isRoom = isRoom;
 	}
 	
-//	public int getRow() {
-//		return row;
-//	}
-//
-//	public int getColumn() {
-//		return column;
-//	}
+	public int getRow() {
+		return row;
+	}
+
+	public int getColumn() {
+		return column;
+	}
 
 	public boolean isRoom() {
 		return isRoom;
@@ -48,5 +52,16 @@ public class TestBoardCell {
 	
 	public boolean isOccupied() {
 		return isOccupied;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) return true;
+		if (!(o instanceof TestBoardCell)) return false;
+		
+		TestBoardCell c = (TestBoardCell) o;
+		
+		if (this.row == c.row && this.column == c.column) return true;
+		return false;
 	}
 }

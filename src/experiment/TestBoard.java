@@ -12,13 +12,10 @@ public class TestBoard {
 	
 	public TestBoard() {
 		super();
-		int currRow = 0, currCol = 0;
-		for (TestBoardCell[] i : grid) {
-			for(TestBoardCell j : i) {
-				grid[currRow][currCol] = new TestBoardCell(currRow, currCol);
-				currCol += 1;
+		for (int i = 0; i < grid.length; i++) {
+			for(int j = 0; j < grid[i].length; j++) {
+				grid[i][j] = new TestBoardCell(i, j);
 			}
-			currRow += 1;
 		}
 		// code for when we need to 
 //		try {
@@ -39,27 +36,48 @@ public class TestBoard {
 	}
 	
 	public void calcTargets(TestBoardCell startCell, int pathlength) {
-//		if ((startCell.getRow() - 1) >= 0) startCell.addAdjacency(new TestBoardCell(startCell.getRow() - 1, startCell.getColumn()));
-//		if ((startCell.getRow() + 1) <= ROWS) startCell.addAdjacency(new TestBoardCell(startCell.getRow() + 1, startCell.getColumn()));
-//		if ((startCell.getColumn() - 1) >= 0) startCell.addAdjacency(new TestBoardCell(startCell.getRow(), startCell.getColumn() - 1));
-//		if ((startCell.getColumn() + 1) >= COLS) startCell.addAdjacency(new TestBoardCell(startCell.getRow(), startCell.getColumn() + 1));
+		if ((startCell.getRow() - 1) >= 0) startCell.addAdjacency(this.getCell(startCell.getRow() - 1, startCell.getColumn()));
+		if ((startCell.getRow() + 1) < ROWS) startCell.addAdjacency(this.getCell(startCell.getRow() + 1, startCell.getColumn()));
+		if ((startCell.getColumn() - 1) >= 0) startCell.addAdjacency(this.getCell(startCell.getRow(), startCell.getColumn() - 1));
+		if ((startCell.getColumn() + 1) < COLS) startCell.addAdjacency(this.getCell(startCell.getRow(), startCell.getColumn() + 1));
 		
-		for (TestBoardCell i : startCell.getAdjList()) {
-			for (TestBoardCell j : visited) {
-				if (i == j) break;
+//		for (TestBoardCell i : startCell.getAdjList()) {
+//		System.out.println(i.getRow() + " " + i.getColumn());
+//		}
+		
+		visited.add(startCell);
+		
+		Set<TestBoardCell> temp = startCell.getAdjList();
+		
+		for (TestBoardCell j : temp) {
+			boolean test = true;
+			for (TestBoardCell i : visited) {
+				if (i.equals(j)) { 
+					test = false;
+					break;
+				}
 			}
-			visited.add(i);
-			if (pathlength == 1) targets.add(i);
-			else calcTargets(i, pathlength - 1);
-			visited.remove(i);
+			if (test && !(j.isOccupied())) {
+				visited.add(j);
+				if (pathlength == 1) targets.add(j);
+				else calcTargets(j, pathlength - 1);
+				visited.remove(j);
+			}
 		}
 	}
 	
 	public Set<TestBoardCell> getTargets() {
-		return targets;
+		Set<TestBoardCell> temp = targets;
+		targets = new HashSet<TestBoardCell>();
+		visited = new HashSet<TestBoardCell>();
+		return temp;
 	}
 	
 	public TestBoardCell getCell(int row, int col) {
 		return grid[row][col];
 	}
+	
+//	public static void main(String[] args) {
+//		TestBoard test = new TestBoard();
+//	}
 }
