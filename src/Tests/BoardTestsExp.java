@@ -143,12 +143,13 @@ public class BoardTestsExp {
 		board.getCell(1, 2).setOccupied(true);
 		board.getCell(2, 3).setOccupied(true);
 		cell = board.getCell(1, 3);
+		board.calcTargets(cell, 2);
+		targets = board.getTargets();
 		assertEquals(0, targets.size());
 		
 		board.getCell(0, 3).setOccupied(false);
 		board.getCell(1, 2).setOccupied(false);
 		board.getCell(2, 3).setOccupied(false);	
-		
 	}
 	
 	@Test
@@ -160,7 +161,7 @@ public class BoardTestsExp {
 		assertEquals(3, targets.size());
 		assertTrue(targets.contains(board.getCell(2, 0)));
 		assertTrue(targets.contains(board.getCell(1, 1)));
-		assertTrue(targets.contains(board.getCell(0, 2)));
+		assertTrue(targets.contains(board.getCell(0, 1)));
 		board.getCell(0,2).setRoom(true);
 		cell = board.getCell(0, 3);
 		board.calcTargets(cell, 1);
