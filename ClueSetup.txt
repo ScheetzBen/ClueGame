@@ -1,0 +1,13 @@
+﻿// Rooms and room cards
+Room, Family Room, F
+Room, Kitchen, K
+Room, Dining Room, D
+Room, Master Bedroom, M
+Room, Guest Bedroom, B
+Room, Office, O
+Room, Sun Room, S
+Room, Garage, G
+Room, Restroom, R
+// Other Spaces on Board
+Space, Unused, X
+Space, Walkway, W
