@@ -1,6 +1,0 @@
-/bin/*.class
-/bin/
-/.setting/
-/.classpath
-/.project
-gitlog.txt
