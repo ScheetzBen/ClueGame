@@ -18,8 +18,8 @@ public class Board {
 		
 		private static Board theInstance = new Board(); 
 		
-//		private Set<BoardCell> targets = new HashSet<BoardCell>();
-//		private Set<BoardCell> visited = new HashSet<BoardCell>();
+		private Set<BoardCell> targets = new HashSet<BoardCell>();
+		private Set<BoardCell> visited = new HashSet<BoardCell>();
 		
 		// Constructor for Board creates new BoardCells for all spots in the grid
 		// Also calls setAdjacencies for all cells in the grid
@@ -163,8 +163,12 @@ public class Board {
 			return grid[row][col];
 		}
 		
+		public Set<BoardCell> getAdjList(int row, int col) {
+			return this.getCell(row, col).getAdjList();
+		}
+		
 		// Calculates all possible targets for the start cell given the pathlength
-//		public void calcTargets(BoardCell startCell, int pathlength) {
+		public void calcTargets(BoardCell startCell, int pathlength) {
 //			visited.add(startCell);
 //			
 //			Set<BoardCell> temp = startCell.getAdjList();
@@ -189,14 +193,16 @@ public class Board {
 //					visited.remove(j);
 //				}
 //			}
-//		}
-//		
+		}
+		
 
-//		// Resets the targets and visited sets and returns the targets
-//		public Set<BoardCell> getTargets() {
+		// Resets the targets and visited sets and returns the targets
+		public Set<BoardCell> getTargets() {
 //			Set<BoardCell> temp = targets;
 //			targets = new HashSet<BoardCell>();
 //			visited = new HashSet<BoardCell>();
 //			return temp;
-//		}
+			
+			return new HashSet<BoardCell>();
+		}
 }

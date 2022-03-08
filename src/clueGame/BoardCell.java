@@ -15,6 +15,9 @@ public class BoardCell {
 		
 		// roomLabel is true if this is where the roomLabel should go, roomCenter is true if the cell is in the Room center
 		private boolean roomLabel = false, roomCenter = false;
+		
+		// isOccupied is true if the cell is currently occupied
+		private boolean isOccupied = false;
 
 		// Hold the cell's adjacencies, is populated in the board constructor
 		private Set<BoardCell> adjacencies = new HashSet<BoardCell>();
@@ -85,6 +88,14 @@ public class BoardCell {
 
 		public void setCenter(boolean roomCenter) {
 			this.roomCenter = roomCenter;
+		}
+		
+		public void setOccupied(boolean isOccupied) {
+			
+		}
+		
+		public boolean isOccupied() {
+			return false;
 		}
 		
 //		// Used to test whether the row and column of a cell are equal
