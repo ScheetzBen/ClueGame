@@ -4,4 +4,3 @@
 /.classpath
 /.project
 gitlog.txt
-Test.txt

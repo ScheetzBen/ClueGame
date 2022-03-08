@@ -1,9 +1,13 @@
 package clueGame;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.Vector;
 
 public class Board {
 	// Variables for Board make a grid an empty list for target and visited cells
@@ -14,8 +18,8 @@ public class Board {
 		
 		private static Board theInstance = new Board(); 
 		
-		private Set<BoardCell> targets = new HashSet<BoardCell>();
-		private Set<BoardCell> visited = new HashSet<BoardCell>();
+//		private Set<BoardCell> targets = new HashSet<BoardCell>();
+//		private Set<BoardCell> visited = new HashSet<BoardCell>();
 		
 		// Constructor for Board creates new BoardCells for all spots in the grid
 		// Also calls setAdjacencies for all cells in the grid
@@ -23,63 +27,140 @@ public class Board {
 			super();
 		}
 		
+		// Returns the one Board instance
 		public static Board getInstance() {
 			return theInstance;
 		}
 		
-		public void loadSetupConfig() {
+		// Calls loadSetupConfig and loadLayoutConfig and catches their exceptions
+		public void initialize() {
+			try {
+				this.loadSetupConfig();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
+			try {
+				this.loadLayoutConfig();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
-		public void loadLayoutConfig() {
+		// Properly loads the setup file
+		public void loadSetupConfig() throws FileNotFoundException{
+			FileReader reader = new FileReader(setupConfigFile);
+
+			Scanner in = new Scanner(reader);
+
+			while (in.hasNext()) {
+				String hold = in.nextLine();
+				String[] array = hold.split(", ");
+				if (array[0].equals("Room") || array[0].equals("Space")) {
+					Room room = new Room(array[1]);
+					
+					String holdLetter = array[2];
+					Character letter = holdLetter.charAt(0);
+					
+					roomMap.put(letter, room);
+				}
+			}
 			
+			in.close();
+		}
+
+		// Properly loads the layout file and sets all BoardCell variables as well as Room centers and labels
+		public void loadLayoutConfig() throws FileNotFoundException {
+			FileReader reader = new FileReader(layoutConfigFile);
+
+			Scanner in = new Scanner(reader);
+			
+			Vector<String[]> rows = new Vector<String[]>();
+			
+			while (in.hasNext()) {
+				String line = in.nextLine();
+				
+				if (!line.isEmpty()) {
+					String[] currCol = line.split(",");
+					rows.add(currCol);
+				}
+			}
+			
+			numRows = rows.size();
+			numColumns = rows.elementAt(0).length;
+			
+			grid = new BoardCell[numRows][numColumns];
+			
+			for (int i = 0; i < grid.length; i++) {
+				for(int j = 0; j < grid[i].length; j++) {
+					grid[i][j] = new BoardCell(i, j, rows.elementAt(i)[j].charAt(0));
+					
+					if (rows.elementAt(i)[j].length() > 1) {
+						char specialType = rows.elementAt(i)[j].charAt(1);
+						BoardCell currCell = this.getCell(i, j);
+						switch(specialType) {
+							case '*':
+								grid[i][j].setCenter(true);
+								roomMap.get(currCell.getInitial()).setCenterCell(currCell);
+								break;
+							case '#':
+								grid[i][j].setLabel(true);
+								roomMap.get(currCell.getInitial()).setLabelCell(currCell);
+								break;
+							case '^':
+								grid[i][j].setDoorDirection(DoorDirection.UP);
+								break;
+							case 'v':
+								grid[i][j].setDoorDirection(DoorDirection.DOWN);
+								break;
+							case '<':
+								grid[i][j].setDoorDirection(DoorDirection.LEFT);
+								break;
+							case '>':
+								grid[i][j].setDoorDirection(DoorDirection.RIGHT);
+								break;
+							default:
+								grid[i][j].setSecretPassage(specialType);	
+						}
+					}
+				}
+			}
+
+			for (int i = 0; i < grid.length; i++) {
+				for(int j = 0; j < grid[i].length; j++) {
+					grid[i][j].setAdjacencies(this);
+				}
+			}
+
 		}
 		
+		// Getters and setters for board variables
 		public void setConfigFiles(String layoutConfigFile, String setupConfigFile) {
-			
+			this.layoutConfigFile = new String(layoutConfigFile);
+			this.setupConfigFile = new String(setupConfigFile);
 		}
 		
 		public Room getRoom(BoardCell cell) {
-			// return roomMap.get(room);
-			return new Room();
+			return roomMap.get(cell.getInitial());
 		}
 		
 		public Room getRoom(Character room) {
-			// return roomMap.get(room);
-			return new Room();
+			return roomMap.get(room);
 		}
 		
-		public void initialize() {
-			// Code for initializing cells in board
-//			grid = new BoardCell[numRows][numColumns];
-//			for (int i = 0; i < grid.length; i++) {
-//				for(int j = 0; j < grid[i].length; j++) {
-//					grid[i][j] = new BoardCell(i, j);
-//				}
-//			}
-//			
-//			for (int i = 0; i < grid.length; i++) {
-//				for(int j = 0; j < grid[i].length; j++) {
-//					grid[i][j].setAdjacencies(this);
-//				}
-//			}
-			
-			// code for when we need to 
-//			try {
-//				FileReader reader = new FileReader("ClueLayout.csv");
-//			} catch (FileNotFoundException e) {
-//				e.printStackTrace();
-//			}
-//			
-//			Scanner in = new Scanner("ClueLayout.csv");
-//			in.useDelimiter(",");
-//			
-//			while (in.hasNext()) {
-//				int currRow = 0, currColumn = 0;
-//				BoardCell currCell = new BoardCell(currRow, currColumn);
-//				if (in.next() == "X" || in.next() == "W") board.add(currCell);
-//				
-//			}
+		public int getNumRows() {
+			return numRows;
+		}
+
+		public int getNumColumns() {
+			return numColumns;
+		}
+		
+		// Return a cell in the grid
+		public BoardCell getCell(int row, int col) {
+			return grid[row][col];
 		}
 		
 		// Calculates all possible targets for the start cell given the pathlength
@@ -110,25 +191,12 @@ public class Board {
 //			}
 //		}
 //		
-		public int getNumRows() {
-			return numRows;
-		}
 
-		public int getNumColumns() {
-			return numColumns;
-		}
-
-		// Resets the targets and visited sets and returns the targets
-		public Set<BoardCell> getTargets() {
-			Set<BoardCell> temp = targets;
-			targets = new HashSet<BoardCell>();
-			visited = new HashSet<BoardCell>();
-			return temp;
-		}
-		
-		// Return a cell in the grid
-		public BoardCell getCell(int row, int col) {
-//			return grid[row][col];
-			return new BoardCell(0,0);
-		}
+//		// Resets the targets and visited sets and returns the targets
+//		public Set<BoardCell> getTargets() {
+//			Set<BoardCell> temp = targets;
+//			targets = new HashSet<BoardCell>();
+//			visited = new HashSet<BoardCell>();
+//			return temp;
+//		}
 }

@@ -6,19 +6,25 @@ import java.util.Set;
 public class BoardCell {
 	// Variables for BoardCell
 		private int row, column;
+		
+		// initial holds the Room char, secretPassage holds the Room char for the secret passage is there is one
 		private char initial, secretPassage;
-		private DoorDirection doorDirection;
-		private boolean roomLabel, roomCenter;
+		
+		// doorDirection hold which way a door faces if there is one, is initialized to NONE because it will be changed if there is a door
+		private DoorDirection doorDirection = DoorDirection.NONE;
+		
+		// roomLabel is true if this is where the roomLabel should go, roomCenter is true if the cell is in the Room center
+		private boolean roomLabel = false, roomCenter = false;
 
+		// Hold the cell's adjacencies, is populated in the board constructor
 		private Set<BoardCell> adjacencies = new HashSet<BoardCell>();
 		
-//		private boolean isRoom = false, isOccupied = false;
-		
-		// Constructor sets the row and column
-		public BoardCell(int row, int column) {
+		// Constructor sets the row and column, and requires and initial char
+		public BoardCell(int row, int column, char initial) {
 			super();
 			this.row = row;
 			this.column = column;
+			this.initial = initial;
 		}
 		
 		// Adds and adjacency to the adjacency list
@@ -32,64 +38,54 @@ public class BoardCell {
 		}
 		
 		// Initializes the adjacency list, used when a new Board is created
-//		public void setAdjacencies(Board board) {
-//			if ((this.row - 1) >= 0) this.addAdjacency(board.getCell(this.row - 1, this.column));
-//			if ((this.row + 1) < board.getNumRows()) this.addAdjacency(board.getCell(this.row + 1, this.column));
-//			if ((this.column - 1) >= 0) this.addAdjacency(board.getCell(this.row, this.column - 1));
-//			if ((this.column + 1) < board.getNumColumns()) this.addAdjacency(board.getCell(this.row, this.column + 1));
-//		}
+		public void setAdjacencies(Board board) {
+			if ((this.row - 1) >= 0) this.addAdjacency(board.getCell(this.row - 1, this.column));
+			if ((this.row + 1) < board.getNumRows()) this.addAdjacency(board.getCell(this.row + 1, this.column));
+			if ((this.column - 1) >= 0) this.addAdjacency(board.getCell(this.row, this.column - 1));
+			if ((this.column + 1) < board.getNumColumns()) this.addAdjacency(board.getCell(this.row, this.column + 1));
+		}
+
+		// getters and setters for all BoardCell variables
+		public char getInitial() {
+			return initial;
+		}
 
 		public char getSecretPassage() {
 			return secretPassage;
+		}
+
+		public void setSecretPassage(char secretPassage) {
+			this.secretPassage = secretPassage;
 		}
 
 		public DoorDirection getDoorDirection() {
 			return doorDirection;
 		}
 		
+		public void setDoorDirection(DoorDirection doorDirection) {
+			this.doorDirection = doorDirection;
+		}
+
 		public boolean isDoorway() {
+			if (doorDirection != DoorDirection.NONE) return true;
 			return false;
 		}
 
 		public boolean isLabel() {
-//			return roomLabel;
-			return false;
+			return roomLabel;
 		}
 
 		public void setLabel(boolean roomLabel) {
-//			this.roomLabel = roomLabel;
+			this.roomLabel = roomLabel;
 		}
 
 		public boolean isRoomCenter() {
-//			return roomCenter;
-			return false;
+			return roomCenter;
 		}
 
 		public void setCenter(boolean roomCenter) {
-//			this.roomCenter = roomCenter;
+			this.roomCenter = roomCenter;
 		}
-		
-		
-		
-//		// Sets whether or not the cell is a room
-//		public void setRoom(boolean isRoom) {
-//			this.isRoom = isRoom;
-//		}
-//
-//		// Return the isRoom Boolean
-//		public boolean isRoom() {
-//			return isRoom;
-//		}
-//		
-//		// Sets whether or not the cell is occupied
-//		public void setOccupied(boolean isOccupied) {
-//			this.isOccupied = isOccupied;
-//		}
-//		
-//		// Returns the isOccupied boolean
-//		public boolean isOccupied() {
-//			return isOccupied;
-//		}
 		
 //		// Used to test whether the row and column of a cell are equal
 //		@Override

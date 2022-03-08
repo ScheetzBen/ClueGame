@@ -5,12 +5,15 @@ public class Room {
 	private BoardCell centerCell;
 	private BoardCell labelCell;
 	
-	public Room() {
+	// Constructor sets the name of the Room
+	public Room(String name) {
 		super();
+		this.name = name;
 	}
 	
+	// Setters and getters for Room variables
 	public String getName() {
-		return new String();
+		return name;
 	}
 
 	public BoardCell getCenterCell() {
@@ -28,6 +31,4 @@ public class Room {
 	public void setLabelCell(BoardCell labelCell) {
 		this.labelCell = labelCell;
 	}
-	
-	
 }

@@ -14,8 +14,8 @@ import clueGame.Room;
 public class FileInitTests {
 	// Constants that I will use to test whether the file was loaded correctly
 		public static final int LEGEND_SIZE = 11;
-		public static final int NUM_ROWS = 25;
-		public static final int NUM_COLUMNS = 23;
+		public static final int NUM_ROWS = 26;
+		public static final int NUM_COLUMNS = 24;
 
 		// NOTE: I made Board static because I only want to set it up one
 		// time (using @BeforeAll), no need to do setup before each test.
@@ -92,14 +92,14 @@ public class FileInitTests {
 					if (cell.isDoorway())
 						numDoors++;
 				}
-			Assert.assertEquals(25, numDoors);
+			Assert.assertEquals(26, numDoors);
 		}
 
 		// Test a few room cells to ensure the room initial is correct.
 		@Test
 		public void testRooms() {
 			// just test a standard room location
-			BoardCell cell = board.getCell( 1, 8);
+			BoardCell cell = board.getCell( 1, 9);
 			Room room = board.getRoom( cell ) ;
 			assertTrue( room != null );
 			assertEquals( room.getName(), "Kitchen" ) ;
@@ -108,7 +108,7 @@ public class FileInitTests {
 			assertFalse( cell.isDoorway()) ;
 
 			// this is a label cell to test
-			cell = board.getCell(3, 0);
+			cell = board.getCell(6, 2);
 			room = board.getRoom( cell ) ;
 			assertTrue( room != null );
 			assertEquals( room.getName(), "Master Bedroom" ) ;
@@ -116,7 +116,7 @@ public class FileInitTests {
 			assertTrue( room.getLabelCell() == cell );
 			
 			// this is a room center cell to test
-			cell = board.getCell(14, 0);
+			cell = board.getCell(16, 1);
 			room = board.getRoom( cell ) ;
 			assertTrue( room != null );
 			assertEquals( room.getName(), "Restroom" ) ;
