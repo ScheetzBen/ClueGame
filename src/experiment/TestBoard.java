@@ -62,7 +62,11 @@ public class TestBoard {
 			}
 			if (test && !(j.isOccupied())) {
 				visited.add(j);
-				if (j.isRoom()) pathlength = 1;
+				if (j.isRoom()) {
+					targets.add(j);
+					visited.remove(j);
+					continue;
+				}
 				if (pathlength == 1) targets.add(j);
 				else calcTargets(j, pathlength - 1);
 				visited.remove(j);
