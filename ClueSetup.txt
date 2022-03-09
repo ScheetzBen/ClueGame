@@ -1,4 +1,4 @@
-﻿// Rooms and room cards
+// Rooms and room cards
 Room, Family Room, F
 Room, Kitchen, K
 Room, Dining Room, D

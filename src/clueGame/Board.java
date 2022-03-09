@@ -40,7 +40,7 @@ public class Board {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (BadConfigFormatException e) {
-				e.getMessage();
+				System.out.println(e.getMessage());
 			}
 			
 			try {
@@ -49,7 +49,7 @@ public class Board {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (BadConfigFormatException e) {
-				e.getMessage();
+				System.out.println(e.getMessage());
 			}
 		}
 		
