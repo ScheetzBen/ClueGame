@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Board {
 	// Variables for Board make a grid an empty list for target and visited cells
@@ -61,14 +61,21 @@ public class Board {
 				String hold = in.nextLine();
 				String[] array = hold.split(", ");
 				if (array[0].equals("Room") || array[0].equals("Space")) {
-					Room room = new Room(array[1]);
+					Room.TileType type;
+					
+					if (array[0].equals("Room")) type = Room.TileType.ROOM;
+					else type = Room.TileType.SPACE;
+					
+					Room room = new Room(array[1], type);
 					
 					String holdLetter = array[2];
 					var letter = holdLetter.charAt(0);
 					
 					roomMap.put(letter, room);
+					
 				} else if (hold.charAt(0) == '/') {
 					continue;
+					
 				} else {
 					throw new BadConfigFormatException(setupConfigFile);
 				}
@@ -82,7 +89,7 @@ public class Board {
 
 			Scanner in = new Scanner(reader);
 			
-			Vector<String[]> rows = new Vector<String[]>();
+			ArrayList<String[]> rows = new ArrayList<String[]>();
 			
 			while (in.hasNext()) {
 				String line = in.nextLine();
@@ -94,7 +101,7 @@ public class Board {
 			}
 			
 			numRows = rows.size();
-			numColumns = rows.elementAt(0).length;
+			numColumns = rows.get(0).length;
 			
 			for (String[] i : rows) {
 				if (i.length != numColumns) throw new BadConfigFormatException(layoutConfigFile);
@@ -102,46 +109,48 @@ public class Board {
 			
 			grid = new BoardCell[numRows][numColumns];
 			
-			for (int i = 0; i < grid.length; i++) {
-				for(int j = 0; j < grid[i].length; j++) {
-					if (!roomMap.containsKey(rows.elementAt(i)[j].charAt(0))) throw new BadConfigFormatException(layoutConfigFile);
+			for (int row = 0; row < grid.length; row++) {
+				for(int col = 0; col < grid[row].length; col++) {
+					if (!roomMap.containsKey(rows.get(row)[col].charAt(0))) throw new BadConfigFormatException(layoutConfigFile);
 					
-					grid[i][j] = new BoardCell(i, j, rows.elementAt(i)[j].charAt(0));
+					grid[row][col] = new BoardCell(row, col, rows.get(row)[col].charAt(0));
 					
-					if (rows.elementAt(i)[j].length() > 1) {
-						char specialType = rows.elementAt(i)[j].charAt(1);
-						BoardCell currCell = this.getCell(i, j);
+					if (rows.get(row)[col].length() > 1) {
+						char specialType = rows.get(row)[col].charAt(1);
+						BoardCell currCell = this.getCell(row, col);
+						
 						switch(specialType) {
 							case '*':
-								grid[i][j].setCenter(true);
-								roomMap.get(currCell.getInitial()).setCenterCell(currCell);
+								getCell(row, col).setCenter(true);
+								getRoom(currCell.getInitial()).setCenterCell(currCell);
 								break;
 							case '#':
-								grid[i][j].setLabel(true);
-								roomMap.get(currCell.getInitial()).setLabelCell(currCell);
+								getCell(row, col).setLabel(true);
+								getRoom(currCell.getInitial()).setLabelCell(currCell);
 								break;
 							case '^':
-								grid[i][j].setDoorDirection(DoorDirection.UP);
+								getCell(row, col).setDoorDirection(DoorDirection.UP);
 								break;
 							case 'v':
-								grid[i][j].setDoorDirection(DoorDirection.DOWN);
+								getCell(row, col).setDoorDirection(DoorDirection.DOWN);
 								break;
 							case '<':
-								grid[i][j].setDoorDirection(DoorDirection.LEFT);
+								getCell(row, col).setDoorDirection(DoorDirection.LEFT);
 								break;
 							case '>':
-								grid[i][j].setDoorDirection(DoorDirection.RIGHT);
+								getCell(row, col).setDoorDirection(DoorDirection.RIGHT);
 								break;
 							default:
-								grid[i][j].setSecretPassage(specialType);	
+								getCell(row, col).setSecretPassage(specialType);	
 						}
 					}
 				}
 			}
 
-			for (int i = 0; i < grid.length; i++) {
-				for(int j = 0; j < grid[i].length; j++) {
-					grid[i][j].setAdjacencies(this);
+			for (int row = 0; row < grid.length; row++) {
+				for(int col = 0; col < grid[row].length; col++) {
+					if ((getRoom(row, col).getType() == Room.TileType.SPACE && getCell(row, col).getInitial() != 'X') || getCell(row, col).getSecretPassage() != ' ')
+					getCell(row, col).setAdjacencies(this);
 				}
 			}
 
@@ -149,36 +158,37 @@ public class Board {
 		
 		// Calculates all possible targets for the start cell given the pathlength
 				public void calcTargets(BoardCell startCell, int pathlength) {
-//					visited.add(startCell);
-//					
-//					Set<BoardCell> temp = startCell.getAdjList();
-//					
-//					for (BoardCell j : temp) {
-//						boolean test = true;
-//						for (BoardCell i : visited) {
-//							if (i.equals(j)) { 
-//								test = false;
-//								break;
-//							}
-//						}
-//						if (test && !(j.isOccupied())) {
-//							visited.add(j);
-//							if (j.isRoom()) {
-//								targets.add(j);
-//								visited.remove(j);
-//								continue;
-//							}
-//							if (pathlength == 1) targets.add(j);
-//							else calcTargets(j, pathlength - 1);
-//							visited.remove(j);
-//						}
-//					}
+					visited.add(startCell);
+					
+					Set<BoardCell> temp = startCell.getAdjList();
+					
+					for (BoardCell cell : temp) {
+						boolean test = true;
+						for (BoardCell inVisited : visited) {
+							if (inVisited.equals(cell)) { 
+								test = false;
+								break;
+							}
+						}
+						if (test && (!(cell.isOccupied()) || cell.isRoomCenter())) {
+							visited.add(cell);
+							if (cell.isRoomCenter()) {
+								targets.add(cell);
+								visited.remove(cell);
+								continue;
+							}
+							
+							if (pathlength == 1) targets.add(cell);
+							else calcTargets(cell, pathlength - 1);
+							visited.remove(cell);
+						}
+					}
 				}
 		
 		// Getters for board variables
 		public void setConfigFiles(String layoutConfigFile, String setupConfigFile) {
-			this.layoutConfigFile = new String(layoutConfigFile);
-			this.setupConfigFile = new String(setupConfigFile);
+			this.layoutConfigFile = new String("data/" + layoutConfigFile);
+			this.setupConfigFile = new String("data/" + setupConfigFile);
 		}
 		
 		public Room getRoom(BoardCell cell) {
@@ -187,6 +197,10 @@ public class Board {
 		
 		public Room getRoom(Character room) {
 			return roomMap.get(room);
+		}
+		
+		public Room getRoom(int row, int col) {
+			return roomMap.get(getCell(row, col).getInitial());
 		}
 		
 		public int getNumRows() {
@@ -208,11 +222,9 @@ public class Board {
 		
 		// Resets the targets and visited sets and returns the targets
 		public Set<BoardCell> getTargets() {
-//			Set<BoardCell> temp = targets;
-//			targets = new HashSet<BoardCell>();
-//			visited = new HashSet<BoardCell>();
-//			return temp;
-			
-			return new HashSet<BoardCell>();
+			Set<BoardCell> temp = targets;
+			targets = new HashSet<BoardCell>();
+			visited = new HashSet<BoardCell>();
+			return temp;
 		}
 }

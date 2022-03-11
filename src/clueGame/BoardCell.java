@@ -8,7 +8,7 @@ public class BoardCell {
 		private int row, column;
 		
 		// initial holds the Room char, secretPassage holds the Room char for the secret passage is there is one
-		private char initial, secretPassage;
+		private char initial, secretPassage = ' ';
 		
 		// doorDirection hold which way a door faces if there is one, is initialized to NONE because it will be changed if there is a door
 		private DoorDirection doorDirection = DoorDirection.NONE;
@@ -42,10 +42,64 @@ public class BoardCell {
 		
 		// Initializes the adjacency list, used when a new Board is created
 		public void setAdjacencies(Board board) {
-			if ((this.row - 1) >= 0) this.addAdjacency(board.getCell(this.row - 1, this.column));
-			if ((this.row + 1) < board.getNumRows()) this.addAdjacency(board.getCell(this.row + 1, this.column));
-			if ((this.column - 1) >= 0) this.addAdjacency(board.getCell(this.row, this.column - 1));
-			if ((this.column + 1) < board.getNumColumns()) this.addAdjacency(board.getCell(this.row, this.column + 1));
+			BoardCell currCell;
+			
+			if ((this.row - 1) >= 0) {
+				currCell = board.getCell(row - 1, column);
+				if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
+			}
+			
+			if ((this.row + 1) < board.getNumRows()) {
+				currCell = board.getCell(row + 1, column);
+				if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
+			}
+			
+			if ((this.column - 1) >= 0) {
+				currCell = board.getCell(row, column - 1);
+				if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
+			}
+			
+			if ((this.column + 1) < board.getNumColumns()) {
+				currCell = board.getCell(row, column + 1);
+				if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
+			}
+			
+//			if ((this.row + 1) < board.getNumRows() && board.getRoom(row + 1, column).getType() != Room.TileType.ROOM && board.getCell(row + 1, column).getInitial() != 'X') this.addAdjacency(board.getCell(this.row + 1, this.column));
+//			if ((this.column - 1) >= 0 && board.getRoom(row, column - 1).getType() != Room.TileType.ROOM && board.getCell(row, column - 1).getInitial() != 'X') this.addAdjacency(board.getCell(this.row, this.column - 1));
+//			if ((this.column + 1) < board.getNumColumns() && board.getRoom(row, column + 1).getType() != Room.TileType.ROOM && board.getCell(row, column + 1).getInitial() != 'X') this.addAdjacency(board.getCell(this.row, this.column + 1));
+			
+			if (this.isDoorway()) {
+				var direction = this.getDoorDirection().toString();
+				
+				switch(direction) {
+					case "^":
+						currCell = board.getCell(row - 1, column);
+						this.addAdjacency(board.getRoom(currCell).getCenterCell());
+						board.getRoom(currCell).getCenterCell().addAdjacency(this);
+						break;
+					case "v":
+						currCell = board.getCell(row + 1, column);
+						this.addAdjacency(board.getRoom(currCell).getCenterCell());
+						board.getRoom(currCell).getCenterCell().addAdjacency(this);
+						break;
+					case "<":
+						currCell = board.getCell(row, column - 1);
+						this.addAdjacency(board.getRoom(currCell).getCenterCell());
+						board.getRoom(currCell).getCenterCell().addAdjacency(this);
+						break;
+					case ">":
+						currCell = board.getCell(row, column + 1);
+						this.addAdjacency(board.getRoom(currCell).getCenterCell());
+						board.getRoom(currCell).getCenterCell().addAdjacency(this);
+						break;
+				}
+			}
+			
+			if (this.getSecretPassage() != ' ') {
+				currCell = board.getRoom(this).getCenterCell();
+				
+				currCell.addAdjacency(board.getRoom(this.getSecretPassage()).getCenterCell());
+			}
 		}
 
 		// getters and setters for all BoardCell variables
@@ -75,7 +129,7 @@ public class BoardCell {
 		}
 		
 		public boolean isOccupied() {
-			return false;
+			return isOccupied;
 		}
 		
 		//Setters for board variables
@@ -97,18 +151,18 @@ public class BoardCell {
 		}
 		
 		public void setOccupied(boolean isOccupied) {
-			
+			this.isOccupied = isOccupied;
 		}
 		
-//		// Used to test whether the row and column of a cell are equal
-//		@Override
-//		public boolean equals(Object o) {
-//			if (o == this) return true;
-//			if (!(o instanceof BoardCell)) return false;
-//			
-//			BoardCell c = (BoardCell) o;
-//			
-//			if (this.row == c.row && this.column == c.column) return true;
-//			return false;
-//		}
+		// Used to test whether the row and column of a cell are equal
+		@Override
+		public boolean equals(Object o) {
+			if (o == this) return true;
+			if (!(o instanceof BoardCell)) return false;
+			
+			BoardCell c = (BoardCell) o;
+			
+			if (this.row == c.row && this.column == c.column) return true;
+			return false;
+		}
 }

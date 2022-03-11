@@ -34,7 +34,7 @@ public class BoardAdjTargetTest {
 		{
 			// we want to test a couple of different rooms.
 			// First, the M that only has a single door but a secret room
-			Set<BoardCell> testList = board.getAdjList(7,2 );
+			Set<BoardCell> testList = board.getAdjList(7,2);
 			assertEquals(3, testList.size());
 			assertTrue(testList.contains(board.getCell(11, 6)));
 			assertTrue(testList.contains(board.getCell(10, 6)));
@@ -272,7 +272,7 @@ public class BoardAdjTargetTest {
 		public void testTargetsOccupied() {
 			// test a roll of 4 blocked 2 down
 			board.getCell(6, 21).setOccupied(true);
-			board.calcTargets(board.getCell(6, 24), 4);
+			board.calcTargets(board.getCell(6, 23), 4);
 			board.getCell(6, 21).setOccupied(false);
 			Set<BoardCell> targets = board.getTargets();
 			assertEquals(13, targets.size());
