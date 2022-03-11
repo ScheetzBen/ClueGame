@@ -37,7 +37,6 @@ public class Board {
 			try {
 				this.loadSetupConfig();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (BadConfigFormatException e) {
 				System.out.println(e.getMessage());
@@ -46,7 +45,6 @@ public class Board {
 			try {
 				this.loadLayoutConfig();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (BadConfigFormatException e) {
 				System.out.println(e.getMessage());
@@ -66,7 +64,7 @@ public class Board {
 					Room room = new Room(array[1]);
 					
 					String holdLetter = array[2];
-					Character letter = holdLetter.charAt(0);
+					var letter = holdLetter.charAt(0);
 					
 					roomMap.put(letter, room);
 				} else if (hold.charAt(0) == '/') {
@@ -149,7 +147,35 @@ public class Board {
 
 		}
 		
-		// Getters and setters for board variables
+		// Calculates all possible targets for the start cell given the pathlength
+				public void calcTargets(BoardCell startCell, int pathlength) {
+//					visited.add(startCell);
+//					
+//					Set<BoardCell> temp = startCell.getAdjList();
+//					
+//					for (BoardCell j : temp) {
+//						boolean test = true;
+//						for (BoardCell i : visited) {
+//							if (i.equals(j)) { 
+//								test = false;
+//								break;
+//							}
+//						}
+//						if (test && !(j.isOccupied())) {
+//							visited.add(j);
+//							if (j.isRoom()) {
+//								targets.add(j);
+//								visited.remove(j);
+//								continue;
+//							}
+//							if (pathlength == 1) targets.add(j);
+//							else calcTargets(j, pathlength - 1);
+//							visited.remove(j);
+//						}
+//					}
+				}
+		
+		// Getters for board variables
 		public void setConfigFiles(String layoutConfigFile, String setupConfigFile) {
 			this.layoutConfigFile = new String(layoutConfigFile);
 			this.setupConfigFile = new String(setupConfigFile);
@@ -180,35 +206,6 @@ public class Board {
 			return this.getCell(row, col).getAdjList();
 		}
 		
-		// Calculates all possible targets for the start cell given the pathlength
-		public void calcTargets(BoardCell startCell, int pathlength) {
-//			visited.add(startCell);
-//			
-//			Set<BoardCell> temp = startCell.getAdjList();
-//			
-//			for (BoardCell j : temp) {
-//				boolean test = true;
-//				for (BoardCell i : visited) {
-//					if (i.equals(j)) { 
-//						test = false;
-//						break;
-//					}
-//				}
-//				if (test && !(j.isOccupied())) {
-//					visited.add(j);
-//					if (j.isRoom()) {
-//						targets.add(j);
-//						visited.remove(j);
-//						continue;
-//					}
-//					if (pathlength == 1) targets.add(j);
-//					else calcTargets(j, pathlength - 1);
-//					visited.remove(j);
-//				}
-//			}
-		}
-		
-
 		// Resets the targets and visited sets and returns the targets
 		public Set<BoardCell> getTargets() {
 //			Set<BoardCell> temp = targets;

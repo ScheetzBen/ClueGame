@@ -57,18 +57,10 @@ public class BoardCell {
 			return secretPassage;
 		}
 
-		public void setSecretPassage(char secretPassage) {
-			this.secretPassage = secretPassage;
-		}
-
 		public DoorDirection getDoorDirection() {
 			return doorDirection;
 		}
 		
-		public void setDoorDirection(DoorDirection doorDirection) {
-			this.doorDirection = doorDirection;
-		}
-
 		public boolean isDoorway() {
 			if (doorDirection != DoorDirection.NONE) return true;
 			return false;
@@ -78,24 +70,34 @@ public class BoardCell {
 			return roomLabel;
 		}
 
-		public void setLabel(boolean roomLabel) {
-			this.roomLabel = roomLabel;
-		}
-
 		public boolean isRoomCenter() {
 			return roomCenter;
 		}
+		
+		public boolean isOccupied() {
+			return false;
+		}
+		
+		//Setters for board variables
+		public void setSecretPassage(char secretPassage) {
+			this.secretPassage = secretPassage;
+		}
+		
+		public void setDoorDirection(DoorDirection doorDirection) {
+			this.doorDirection = doorDirection;
+		}
 
+
+		public void setLabel(boolean roomLabel) {
+			this.roomLabel = roomLabel;
+		}
+		
 		public void setCenter(boolean roomCenter) {
 			this.roomCenter = roomCenter;
 		}
 		
 		public void setOccupied(boolean isOccupied) {
 			
-		}
-		
-		public boolean isOccupied() {
-			return false;
 		}
 		
 //		// Used to test whether the row and column of a cell are equal
