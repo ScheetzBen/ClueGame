@@ -1,6 +1,5 @@
 /bin/*.class
-/bin/
-/.setting/
-/.classpath
-/.project
+.setting
+.classpath
+.project
 gitlog.txt
