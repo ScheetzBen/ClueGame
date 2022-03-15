@@ -64,10 +64,7 @@ public class BoardCell {
 			if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
 		}
 
-		//			if ((this.row + 1) < board.getNumRows() && board.getRoom(row + 1, column).getType() != Room.TileType.ROOM && board.getCell(row + 1, column).getInitial() != 'X') this.addAdjacency(board.getCell(this.row + 1, this.column));
-		//			if ((this.column - 1) >= 0 && board.getRoom(row, column - 1).getType() != Room.TileType.ROOM && board.getCell(row, column - 1).getInitial() != 'X') this.addAdjacency(board.getCell(this.row, this.column - 1));
-		//			if ((this.column + 1) < board.getNumColumns() && board.getRoom(row, column + 1).getType() != Room.TileType.ROOM && board.getCell(row, column + 1).getInitial() != 'X') this.addAdjacency(board.getCell(this.row, this.column + 1));
-
+		// Handles doorway adjacency
 		if (this.isDoorway()) {
 			var direction = this.getDoorDirection().toString();
 
@@ -95,6 +92,7 @@ public class BoardCell {
 			}
 		}
 
+		// Handles secret passage adjacency
 		if (this.getSecretPassage() != ' ') {
 			currCell = board.getRoom(this).getCenterCell();
 

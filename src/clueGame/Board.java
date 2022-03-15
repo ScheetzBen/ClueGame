@@ -10,14 +10,24 @@ import java.util.Set;
 import java.util.ArrayList;
 
 public class Board {
-	// Variables for Board make a grid an empty list for target and visited cells
+	// Variables for Board
+	
+	// Initialize a grid array to hold all the cell in the board
 	private BoardCell[][] grid;
+	
+	// variables to hold the number of rows and columns
 	private int numRows, numColumns;
+	
+	// Holds the filenames for the layout and setup config files
 	private String layoutConfigFile, setupConfigFile;
+	
+	// Map to hold all the different characters and their relates Room objects
 	private Map<Character, Room> roomMap = new HashMap<Character, Room>();
 
+	// static variable of Board so that there is only ever one Board object created when the program is running
 	private static Board theInstance = new Board(); 
 
+	// Sets to hold information for calculating targets
 	private Set<BoardCell> targets = new HashSet<BoardCell>();
 	private Set<BoardCell> visited = new HashSet<BoardCell>();
 
@@ -36,13 +46,6 @@ public class Board {
 	public void initialize() {
 		try {
 			this.loadSetupConfig();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (BadConfigFormatException e) {
-			System.out.println(e.getMessage());
-		}
-
-		try {
 			this.loadLayoutConfig();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -58,24 +61,18 @@ public class Board {
 		Scanner in = new Scanner(reader);
 
 		while (in.hasNext()) {
-			String hold = in.nextLine();
-			String[] array = hold.split(", ");
+			String[] array = in.nextLine().split(", ");
+			
 			if (array[0].equals("Room") || array[0].equals("Space")) {
 				Room.TileType type;
 
 				if (array[0].equals("Room")) type = Room.TileType.ROOM;
 				else type = Room.TileType.SPACE;
 
-				Room room = new Room(array[1], type);
+				roomMap.put(array[2].charAt(0), new Room(array[1], type));
 
-				String holdLetter = array[2];
-				var letter = holdLetter.charAt(0);
-
-				roomMap.put(letter, room);
-
-			} else if (hold.charAt(0) == '/') {
+			} else if (array[0].charAt(0) == '/') {
 				continue;
-
 			} else {
 				throw new BadConfigFormatException(setupConfigFile);
 			}
@@ -119,6 +116,7 @@ public class Board {
 					char specialType = rows.get(row)[col].charAt(1);
 					BoardCell currCell = this.getCell(row, col);
 
+					// Switch handles special cell types
 					switch(specialType) {
 					case '*':
 						getCell(row, col).setCenter(true);
@@ -147,6 +145,7 @@ public class Board {
 			}
 		}
 
+		// Initializes the adjacency list for all the cells in the grid
 		for (int row = 0; row < grid.length; row++) {
 			for(int col = 0; col < grid[row].length; col++) {
 				if ((getRoom(row, col).getType() == Room.TileType.SPACE && getCell(row, col).getInitial() != 'X') || getCell(row, col).getSecretPassage() != ' ')
@@ -160,16 +159,19 @@ public class Board {
 	public void calcTargets(BoardCell startCell, int pathlength) {
 		visited.add(startCell);
 
-		Set<BoardCell> temp = startCell.getAdjList();
-
-		for (BoardCell cell : temp) {
+		// Runs for all adjacent cells
+		for (BoardCell cell : startCell.getAdjList()) {
 			boolean test = true;
+			
+			// Testing to see if the adjacent cell  has already been visited
 			for (BoardCell inVisited : visited) {
 				if (inVisited.equals(cell)) { 
 					test = false;
 					break;
 				}
 			}
+			
+			// As long as the cell has not been visited and is not occupied (Unless it is a room center) then the cell is added to targets
 			if (test && (!(cell.isOccupied()) || cell.isRoomCenter())) {
 				visited.add(cell);
 				if (cell.isRoomCenter()) {
@@ -178,6 +180,7 @@ public class Board {
 					continue;
 				}
 
+				// Recursive call until the pathlength is 1
 				if (pathlength == 1) targets.add(cell);
 				else calcTargets(cell, pathlength - 1);
 				visited.remove(cell);

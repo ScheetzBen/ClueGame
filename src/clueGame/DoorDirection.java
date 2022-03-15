@@ -6,10 +6,12 @@ public enum DoorDirection {
 
 	private String value;
 
+	// Constructor for DoorDirection sets the given string to the value
 	DoorDirection(String value) {
 		this.value = value;
 	}
 
+	// toString so that DoorDirection can be converted to a proper string
 	@Override
 	public String toString() {
 		return value;
