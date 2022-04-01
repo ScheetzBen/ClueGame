@@ -22,11 +22,20 @@ public class Board {
 	// Holds the filenames for the layout and setup config files
 	private String layoutConfigFile, setupConfigFile;
 	
+	// Variable to hold the HumanPlayer
+	private HumanPlayer player;
+	
+	// Array to hold the ComputerPlayers
+	private ComputerPlayer[] ai;
+	
 	// Map to hold all the different characters and their related Room objects
 	private Map<Character, Room> roomMap = new HashMap<Character, Room>();
 	
-	// Map to hold card and their related characters
+	// Set to hold Card information before dealing
 	private Set<Card> cards = new HashSet<Card>();
+	
+	// Array to hold the Solution
+	private Card[] solution;
 
 	// static variable of Board so that there is only ever one Board object created when the program is running
 	private static Board theInstance = new Board(); 
@@ -223,7 +232,15 @@ public class Board {
 	}
 	
 	public HumanPlayer getHumanPlayer() {
-		return new HumanPlayer("", Color.BLACK);
+		return new HumanPlayer("", null);
+	}
+	
+	public ComputerPlayer[] getComputerPlayers() {
+		return new ComputerPlayer[0];
+	}
+	
+	public Card[] getSolution() {
+		return new Card[0];
 	}
 
 	public int getNumRows() {
