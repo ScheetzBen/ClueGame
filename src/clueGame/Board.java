@@ -1,5 +1,6 @@
 package clueGame;
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
@@ -21,8 +22,11 @@ public class Board {
 	// Holds the filenames for the layout and setup config files
 	private String layoutConfigFile, setupConfigFile;
 	
-	// Map to hold all the different characters and their relates Room objects
+	// Map to hold all the different characters and their related Room objects
 	private Map<Character, Room> roomMap = new HashMap<Character, Room>();
+	
+	// Map to hold card and their related characters
+	private Set<Card> cards = new HashSet<Card>();
 
 	// static variable of Board so that there is only ever one Board object created when the program is running
 	private static Board theInstance = new Board(); 
@@ -70,6 +74,9 @@ public class Board {
 				else type = Room.TileType.SPACE;
 
 				roomMap.put(array[2].charAt(0), new Room(array[1], type));
+				
+			} else if (array[0].equals("Weapon") || array[0].equals("Person")) {
+				
 
 			} else if (array[0].charAt(0) == '/') {
 				continue;
@@ -154,6 +161,11 @@ public class Board {
 		}
 
 	}
+	
+	// Deals the cards evenly to all players
+	public void deal() {
+		
+	}
 
 	// Calculates all possible targets for the start cell given the pathlength
 	public void calcTargets(BoardCell startCell, int pathlength) {
@@ -198,12 +210,20 @@ public class Board {
 		return roomMap.get(cell.getInitial());
 	}
 
-	public Room getRoom(Character room) {
+	public Room getRoom(char room) {
 		return roomMap.get(room);
 	}
 
 	public Room getRoom(int row, int col) {
 		return roomMap.get(getCell(row, col).getInitial());
+	}
+	
+	public Card getCard(String card) {
+		return new Card("");
+	}
+	
+	public HumanPlayer getHumanPlayer() {
+		return new HumanPlayer("", Color.BLACK);
 	}
 
 	public int getNumRows() {
