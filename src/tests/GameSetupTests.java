@@ -3,6 +3,7 @@ package tests;
 import static org.junit.Assert.*;
 
 import java.awt.Color;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,23 +31,27 @@ public class GameSetupTests {
 	
 	@Test
 	public void TestCardNames() {
-		assertEquals(Card.CardType.PERSON, board.getCard("Charlie").getType());
-		assertEquals(Card.CardType.PERSON, board.getCard("Jan").getType());
-		assertEquals(Card.CardType.PERSON, board.getCard("Oralee").getType());
-		assertEquals(Card.CardType.PERSON, board.getCard("Gary").getType());
-		assertEquals(Card.CardType.PERSON, board.getCard("Kyle").getType());
-		assertEquals(Card.CardType.PERSON, board.getCard("Mary").getType());
+		Set<Card> personCards = board.getPersonCards();
+		assertEquals(6, personCards.size());
+		assertTrue(personCards.contains(new Card("Charlie", Card.CardType.PERSON)));
+		assertTrue(personCards.contains(new Card("Jan", Card.CardType.PERSON)));
+		assertTrue(personCards.contains(new Card("Oralee", Card.CardType.PERSON)));		
+		assertTrue(personCards.contains(new Card("Gary", Card.CardType.PERSON)));
+		assertTrue(personCards.contains(new Card("Kyle", Card.CardType.PERSON)));
+		assertTrue(personCards.contains(new Card("Mary", Card.CardType.PERSON)));
 		
-		assertEquals(Card.CardType.WEAPON, board.getCard("Knife").getType());
-		assertEquals(Card.CardType.WEAPON, board.getCard("Hammer").getType());
-		assertEquals(Card.CardType.WEAPON, board.getCard("Axe").getType());
-		assertEquals(Card.CardType.WEAPON, board.getCard("Pool Stick").getType());
-		assertEquals(Card.CardType.WEAPON, board.getCard("Poison").getType());
-		assertEquals(Card.CardType.WEAPON, board.getCard("Cable").getType());
+		Set<Card> weaponCards = board.getWeaponCards();
+		assertTrue(weaponCards.contains(new Card("Knife", Card.CardType.WEAPON)));
+		assertTrue(weaponCards.contains(new Card("Hammer", Card.CardType.WEAPON)));
+		assertTrue(weaponCards.contains(new Card("Axe", Card.CardType.WEAPON)));
+		assertTrue(weaponCards.contains(new Card("Pool Stick", Card.CardType.WEAPON)));
+		assertTrue(weaponCards.contains(new Card("Poison", Card.CardType.WEAPON)));
+		assertTrue(weaponCards.contains(new Card("Cable", Card.CardType.WEAPON)));
 		
-		assertEquals(Card.CardType.ROOM, board.getCard("Family Room").getType());
-		assertEquals(Card.CardType.ROOM, board.getCard("Kitchen").getType());
-		assertEquals(Card.CardType.ROOM, board.getCard("Dining Room").getType());
+		Set<Card> roomCards = board.getRoomCards();
+		assertTrue(roomCards.contains(new Card("Family Room", Card.CardType.ROOM)));
+		assertTrue(roomCards.contains(new Card("Kitchen", Card.CardType.ROOM)));
+		assertTrue(roomCards.contains(new Card("Dining Room", Card.CardType.ROOM)));
 	}
 	
 	@Test

@@ -37,6 +37,6 @@ abstract class Player {
 	}
 
 	public ArrayList<Card> getCards() {
-		return new ArrayList<Card>();
+		return cards;
 	}
 }

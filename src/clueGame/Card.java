@@ -8,9 +8,11 @@ public class Card {
 		ROOM, PERSON, WEAPON;
 	}
 	
-	public Card(String cardName) {
+	public Card(String cardName, CardType type) {
 		super();
+		
 		this.cardName = cardName;
+		this.type = type;
 	}
 	
 	@Override
@@ -20,7 +22,7 @@ public class Card {
 		
 		Card c = (Card) target;
 		
-		if (this.cardName == c.cardName) return true;
+		if (this.cardName == c.cardName && this.type == c.type) return true;
 		else return false;
 	}
 

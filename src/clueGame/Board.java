@@ -31,8 +31,10 @@ public class Board {
 	// Map to hold all the different characters and their related Room objects
 	private Map<Character, Room> roomMap = new HashMap<Character, Room>();
 	
-	// Set to hold Card information before dealing
-	private Set<Card> cards = new HashSet<Card>();
+	// Sets to hold cards of different types for dealing
+	private Set<Card> roomCards = new HashSet<Card>();
+	private Set<Card> weaponCards = new HashSet<Card>();
+	private Set<Card> personCards = new HashSet<Card>();
 	
 	// Array to hold the Solution
 	private Card[] solution;
@@ -84,9 +86,12 @@ public class Board {
 
 				roomMap.put(array[2].charAt(0), new Room(array[1], type));
 				
-			} else if (array[0].equals("Weapon") || array[0].equals("Person")) {
+				roomCards.add(new Card(array[1], Card.CardType.ROOM));
 				
-
+			} else if (array[0].equals("Weapon") || array[0].equals("Person")) {
+				if (array[0].equals("Weapon")) weaponCards.add(new Card(array[1], Card.CardType.WEAPON));
+				else personCards.add(new Card(array[1], Card.CardType.PERSON));
+			
 			} else if (array[0].charAt(0) == '/') {
 				continue;
 			} else {
@@ -227,20 +232,28 @@ public class Board {
 		return roomMap.get(getCell(row, col).getInitial());
 	}
 	
-	public Card getCard(String card) {
-		return new Card("");
+	public Set<Card> getRoomCards() {
+		return roomCards;
+	}
+	
+	public Set<Card> getWeaponCards() {
+		return weaponCards;
+	}
+	
+	public Set<Card> getPersonCards() {
+		return personCards;
 	}
 	
 	public HumanPlayer getHumanPlayer() {
-		return new HumanPlayer("", null);
+		return player;
 	}
 	
 	public ComputerPlayer[] getComputerPlayers() {
-		return new ComputerPlayer[0];
+		return ai;
 	}
 	
 	public Card[] getSolution() {
-		return new Card[0];
+		return solution;
 	}
 
 	public int getNumRows() {
