@@ -151,16 +151,4 @@ public class BoardCell {
 	public void setOccupied(boolean isOccupied) {
 		this.isOccupied = isOccupied;
 	}
-
-	// Used to test whether the row and column of a cell are equal
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) return true;
-		if (!(o instanceof BoardCell)) return false;
-
-		BoardCell c = (BoardCell) o;
-
-		if (this.row == c.row && this.column == c.column) return true;
-		return false;
-	}
 }

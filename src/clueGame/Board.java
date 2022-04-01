@@ -165,7 +165,7 @@ public class Board {
 			
 			// Testing to see if the adjacent cell  has already been visited
 			for (BoardCell inVisited : visited) {
-				if (inVisited.equals(cell)) { 
+				if (inVisited == cell) { 
 					test = false;
 					break;
 				}
