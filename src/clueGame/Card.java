@@ -22,7 +22,7 @@ public class Card {
 		
 		Card c = (Card) target;
 		
-		if (this.cardName == c.cardName && this.type == c.type) return true;
+		if (this.cardName.equals(c.cardName) && this.type.equals(c.type)) return true;
 		else return false;
 	}
 

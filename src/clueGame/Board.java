@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.ArrayList;
@@ -23,21 +24,19 @@ public class Board {
 	private String layoutConfigFile, setupConfigFile;
 	
 	// Variable to hold the HumanPlayer
-	private HumanPlayer player;
+	private HumanPlayer player = null;
 	
 	// Array to hold the ComputerPlayers
-	private ComputerPlayer[] ai;
+	private ArrayList<ComputerPlayer> ai = new ArrayList<ComputerPlayer>();
 	
 	// Map to hold all the different characters and their related Room objects
 	private Map<Character, Room> roomMap = new HashMap<Character, Room>();
 	
 	// Sets to hold cards of different types for dealing
-	private Set<Card> roomCards = new HashSet<Card>();
-	private Set<Card> weaponCards = new HashSet<Card>();
-	private Set<Card> personCards = new HashSet<Card>();
+	private ArrayList<Card> cards;
 	
 	// Array to hold the Solution
-	private Card[] solution;
+	private Card[] solution = new Card[3];
 
 	// static variable of Board so that there is only ever one Board object created when the program is running
 	private static Board theInstance = new Board(); 
@@ -71,27 +70,34 @@ public class Board {
 
 	// Properly loads the setup file
 	public void loadSetupConfig() throws FileNotFoundException, BadConfigFormatException{
+		cards = new ArrayList<Card>();
+		
 		FileReader reader = new FileReader(setupConfigFile);
 
 		Scanner in = new Scanner(reader);
 
 		while (in.hasNext()) {
 			String[] array = in.nextLine().split(", ");
-			
+
 			if (array[0].equals("Room") || array[0].equals("Space")) {
 				Room.TileType type;
 
-				if (array[0].equals("Room")) type = Room.TileType.ROOM;
-				else type = Room.TileType.SPACE;
+				if (array[0].equals("Room")) {
+					type = Room.TileType.ROOM;
+					cards.add(new Card(array[1], Card.CardType.ROOM));
+
+				} else type = Room.TileType.SPACE;
 
 				roomMap.put(array[2].charAt(0), new Room(array[1], type));
-				
-				roomCards.add(new Card(array[1], Card.CardType.ROOM));
-				
+
 			} else if (array[0].equals("Weapon") || array[0].equals("Person")) {
-				if (array[0].equals("Weapon")) weaponCards.add(new Card(array[1], Card.CardType.WEAPON));
-				else personCards.add(new Card(array[1], Card.CardType.PERSON));
-			
+				if (array[0].equals("Weapon")) cards.add(new Card(array[1], Card.CardType.WEAPON));
+				else {
+					if (player == null) player = new HumanPlayer(array[1], new Color(Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4])));
+					else ai.add(new ComputerPlayer(array[1], new Color(Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4]))));
+					cards.add(new Card(array[1], Card.CardType.PERSON));
+				}
+
 			} else if (array[0].charAt(0) == '/') {
 				continue;
 			} else {
@@ -173,12 +179,51 @@ public class Board {
 					getCell(row, col).setAdjacencies(this);
 			}
 		}
-
+		in.close();
 	}
 	
 	// Deals the cards evenly to all players
 	public void deal() {
+		Random rnd = new Random();
 		
+		ArrayList<Card> deck = new ArrayList<Card>(cards);
+		
+		int currCard = rnd.nextInt(deck.size());
+		
+		while (deck.get(currCard).getType() != Card.CardType.PERSON) currCard = rnd.nextInt(deck.size());
+		solution[0] = deck.get(currCard);
+		deck.remove(currCard);
+		currCard = rnd.nextInt(deck.size());
+		
+		while (deck.get(currCard).getType() != Card.CardType.WEAPON) currCard = rnd.nextInt(deck.size());
+		solution[1] = deck.get(currCard);
+		deck.remove(currCard);
+		currCard = rnd.nextInt(deck.size());
+		
+		while (deck.get(currCard).getType() != Card.CardType.ROOM) currCard = rnd.nextInt(deck.size());
+		solution[2] = deck.get(currCard);
+		deck.remove(currCard);
+		currCard = rnd.nextInt(deck.size());
+		
+		while (!deck.isEmpty()) {
+			currCard = rnd.nextInt(deck.size());
+			
+			player.addCard(deck.get(currCard));
+			
+			deck.remove(currCard);
+			
+			if (deck.isEmpty()) break;
+			
+			for (var i : ai) {
+				currCard = rnd.nextInt(deck.size());
+				
+				i.addCard(deck.get(currCard));
+				
+				deck.remove(currCard);
+				
+				if (deck.isEmpty()) break;
+			}
+		}
 	}
 
 	// Calculates all possible targets for the start cell given the pathlength
@@ -232,23 +277,15 @@ public class Board {
 		return roomMap.get(getCell(row, col).getInitial());
 	}
 	
-	public Set<Card> getRoomCards() {
-		return roomCards;
-	}
-	
-	public Set<Card> getWeaponCards() {
-		return weaponCards;
-	}
-	
-	public Set<Card> getPersonCards() {
-		return personCards;
+	public ArrayList<Card> getCards() {
+		return cards;
 	}
 	
 	public HumanPlayer getHumanPlayer() {
 		return player;
 	}
 	
-	public ComputerPlayer[] getComputerPlayers() {
+	public ArrayList<ComputerPlayer> getComputerPlayers() {
 		return ai;
 	}
 	
