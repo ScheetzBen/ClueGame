@@ -12,6 +12,7 @@ import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.DoorDirection;
 import clueGame.Room;
+import clueGame.Solution;
 import clueGame.Card;
 import clueGame.ComputerPlayer;
 
@@ -68,21 +69,11 @@ public class GameSetupTests {
 	
 	@Test
 	public void TestSolutionDealt() {
-		Card[] solution = board.getSolution();
-		
-		assertEquals(3, solution.length);
-		
-		int p = 0, w = 0, r = 0;
-		
-		for (var i : solution) {
-			if (i.getType() == Card.CardType.PERSON) p++;
-			else if (i.getType() == Card.CardType.WEAPON) w++;
-			else if (i.getType() == Card.CardType.ROOM) r++;
-		}
-		
-		assertEquals(1, p);
-		assertEquals(1, w);
-		assertEquals(1, r);
+		Solution solution = board.getSolution();
+
+		assertEquals(Card.CardType.PERSON, solution.getPerson().getType());
+		assertEquals(Card.CardType.WEAPON, solution.getWeapon().getType());
+		assertEquals(Card.CardType.ROOM, solution.getRoom().getType());
 	}
 	
 	@Test

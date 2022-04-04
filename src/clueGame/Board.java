@@ -35,8 +35,7 @@ public class Board {
 	// Sets to hold cards of different types for dealing
 	private ArrayList<Card> cards;
 	
-	// Array to hold the Solution
-	private Card[] solution = new Card[3];
+	private Solution solution;
 
 	// static variable of Board so that there is only ever one Board object created when the program is running
 	private static Board theInstance = new Board(); 
@@ -190,20 +189,24 @@ public class Board {
 		
 		int currCard = rnd.nextInt(deck.size());
 		
+		Card[] solutionHold = new Card[3];
+		
 		while (deck.get(currCard).getType() != Card.CardType.PERSON) currCard = rnd.nextInt(deck.size());
-		solution[0] = deck.get(currCard);
+		solutionHold[0] = deck.get(currCard);
 		deck.remove(currCard);
 		currCard = rnd.nextInt(deck.size());
 		
 		while (deck.get(currCard).getType() != Card.CardType.WEAPON) currCard = rnd.nextInt(deck.size());
-		solution[1] = deck.get(currCard);
+		solutionHold[1] = deck.get(currCard);
 		deck.remove(currCard);
 		currCard = rnd.nextInt(deck.size());
 		
 		while (deck.get(currCard).getType() != Card.CardType.ROOM) currCard = rnd.nextInt(deck.size());
-		solution[2] = deck.get(currCard);
+		solutionHold[2] = deck.get(currCard);
 		deck.remove(currCard);
 		currCard = rnd.nextInt(deck.size());
+		
+		solution = new Solution(solutionHold[0], solutionHold[1], solutionHold[2]);
 		
 		while (!deck.isEmpty()) {
 			currCard = rnd.nextInt(deck.size());
@@ -258,6 +261,11 @@ public class Board {
 			}
 		}
 	}
+	
+	public boolean checkAccusation(Solution suggestion) {
+		if (suggestion.getPerson() == solution.getPerson() && suggestion.getWeapon() == solution.getWeapon() && suggestion.getRoom() == solution.getRoom()) return true;
+		return false;
+	}
 
 	// Getters for board variables
 	public void setConfigFiles(String layoutConfigFile, String setupConfigFile) {
@@ -289,7 +297,7 @@ public class Board {
 		return ai;
 	}
 	
-	public Card[] getSolution() {
+	public Solution getSolution() {
 		return solution;
 	}
 
