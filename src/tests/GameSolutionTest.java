@@ -33,9 +33,9 @@ public class GameSolutionTest {
 		
 		solution = new Solution(new Card("Charlie", Card.CardType.PERSON), new Card("Knife", Card.CardType.WEAPON), new Card("Kitchen", Card.CardType.ROOM));
 		
-		person = new Card("Gary", Card.CardType.PERSON);
-		weapon = new Card("Poison", Card.CardType.WEAPON);
-		room = new Card("Master Bedroom", Card.CardType.ROOM);
+		person = new Card("Gar", Card.CardType.PERSON);
+		weapon = new Card("Poiso", Card.CardType.WEAPON);
+		room = new Card("Master Bedroo", Card.CardType.ROOM);
 	}
 	
 	@Test
