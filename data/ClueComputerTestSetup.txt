@@ -1,0 +1,12 @@
+// Rooms and room cards
+Room, Room, R
+Room, BRoom, B
+// Other Spaces on Board
+Space, Unused, X
+Space, Walkway, W
+// Weapons
+Weapon, Knife
+Weapon, Hammer
+// People
+Person, Charlie, 0, 255, 0
+Person, Jan, 0, 0, 255

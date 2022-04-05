@@ -84,7 +84,7 @@ public class Board {
 
 				} else type = Room.TileType.SPACE;
 
-				roomMap.put(array[2].charAt(0), new Room(array[1], type));
+				roomMap.put(array[2].charAt(0), new Room(array[1], type, cards.get(cards.size() - 1)));
 
 			} else if (array[0].equals("Weapon")) {
 				cards.add(new Card(array[1], Card.CardType.WEAPON));
@@ -257,7 +257,15 @@ public class Board {
 	
 	// Checks whether any Player can dispute a suggestion
 	public Card handleSuggestion(Solution suggestion, Player accusor) {
-		return new Card("", Card.CardType.PERSON);
+		for (Player i : players) {
+			if (i == accusor) continue;
+			
+			Card tempCard = i.disproveSuggestion(suggestion);
+			
+			if (tempCard != null) return tempCard;
+		}
+		
+		return null;
 	}
 
 	// Method to see whether an accusation is correct
@@ -273,6 +281,8 @@ public class Board {
 	}
 	
 	public void setPlayers(Player[] players) {
+		this.players.clear();
+		
 		for (Player i : players)
 			this.players.add(i);
 	}

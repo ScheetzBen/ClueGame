@@ -41,7 +41,7 @@ public class GameSolutionTest {
 	@Test
 	public void checkAccusationTest() {
 		// Testing correct solution
-		Solution currSolution = board.getSolution();
+		Solution currSolution = new Solution(board.getSolution().getPerson(), board.getSolution().getWeapon(), board.getSolution().getRoom());
 		
 		assertTrue(board.checkAccusation(currSolution));
 		
@@ -51,14 +51,14 @@ public class GameSolutionTest {
 		assertFalse(board.checkAccusation(currSolution));
 		
 		// Testing wrong weapon
-		currSolution.setPerson(solution.getPerson());
+		currSolution.setPerson(board.getSolution().getPerson());
 		
 		currSolution.setWeapon(weapon);
 		
 		assertFalse(board.checkAccusation(currSolution));
 		
 		// Testing wrong room
-		currSolution.setWeapon(solution.getWeapon());
+		currSolution.setWeapon(board.getSolution().getWeapon());
 		
 		currSolution.setRoom(room);
 		

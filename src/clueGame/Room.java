@@ -6,6 +6,7 @@ public class Room {
 	private BoardCell centerCell;
 	private BoardCell labelCell;
 	private TileType type;
+	private Card card;
 
 	// enum to differentiate between Rooms and Spaces in the board
 	enum TileType {
@@ -13,10 +14,11 @@ public class Room {
 	}
 
 	// Constructor sets the name of the Room
-	public Room(String name, TileType type) {
+	public Room(String name, TileType type, Card card) {
 		super();
 		this.name = name;
 		this.type = type;
+		this.card = card;
 	}
 
 	// Getters for Room variables
@@ -34,6 +36,10 @@ public class Room {
 
 	public BoardCell getLabelCell() {
 		return labelCell;
+	}
+
+	public Card getCard() {
+		return card;
 	}
 
 	// Setters for Room variables

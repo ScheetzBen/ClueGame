@@ -10,6 +10,7 @@ public abstract class Player {
 	private Color color;
 	private int row, column;
 	private ArrayList<Card> cards = new ArrayList<Card>();
+	private ArrayList<Card> seen = new ArrayList<Card>();
 	
 	// Constructor sets the name and Color of a Player
 	public Player(String name, Color color) {
@@ -68,8 +69,21 @@ public abstract class Player {
 		return cards;
 	}
 	
+	public ArrayList<Card> getSeen() {
+		return seen;
+	}
+
 	// Setters for Player
 	public void addCard(Card card) {
 		cards.add(card);
+	}
+	
+	public void addSeen(Card card) {
+		seen.add(card);
+	}
+	
+	public void setPosition(int row, int column) {
+		this.row = row;
+		this.column = column;
 	}
 }
