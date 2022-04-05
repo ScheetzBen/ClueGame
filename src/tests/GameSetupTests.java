@@ -2,19 +2,16 @@ package tests;
 
 import static org.junit.Assert.*;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import clueGame.Board;
-import clueGame.BoardCell;
-import clueGame.DoorDirection;
-import clueGame.Room;
 import clueGame.Solution;
 import clueGame.Card;
 import clueGame.ComputerPlayer;
+import clueGame.Player;
 
 public class GameSetupTests {
 	private static Board board;
@@ -55,13 +52,10 @@ public class GameSetupTests {
 	
 	@Test
 	public void TestPlayerLoaded() {
-		assertTrue(board.getHumanPlayer().getName() != "");
-		assertFalse(board.getHumanPlayer().getColor().equals(null));
+		ArrayList<Player> players = board.getPlayers();
+		assertEquals(6, players.size());
 		
-		ArrayList<ComputerPlayer> ai = board.getComputerPlayers();
-		assertEquals(5, ai.size());
-		
-		for (var i: ai) {
+		for (var i: players) {
 			assertTrue(i.getName() != "");
 			assertFalse(i.getColor().equals(null));
 		}
@@ -78,11 +72,9 @@ public class GameSetupTests {
 	
 	@Test
 	public void TestPlayerCards() {
-		assertEquals(3, board.getHumanPlayer().getCards().size());
+		ArrayList<Player> players = board.getPlayers();
 		
-		ArrayList<ComputerPlayer> ai = board.getComputerPlayers();
-		
-		for (var i : ai) {
+		for (var i : players) {
 			assertEquals(3, i.getCards().size());
 		}
 	}

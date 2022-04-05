@@ -7,6 +7,7 @@ public class Solution {
 	// Constructor sets the room, person, and weapon Cards
 	public Solution(Card person, Card weapon, Card room) {
 		super();
+		
 		this.room = room;
 		this.person = person;
 		this.weapon = weapon;
@@ -24,4 +25,18 @@ public class Solution {
 	public Card getWeapon() {
 		return weapon;
 	}
+
+	// Setters for Solution
+	public void setRoom(Card room) {
+		this.room = room;
+	}
+
+	public void setPerson(Card person) {
+		this.person = person;
+	}
+
+	public void setWeapon(Card weapon) {
+		this.weapon = weapon;
+	}
+	
 }

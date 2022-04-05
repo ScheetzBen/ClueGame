@@ -23,11 +23,8 @@ public class Board {
 	// Holds the filenames for the layout and setup config files
 	private String layoutConfigFile, setupConfigFile;
 	
-	// Variable to hold the HumanPlayer
-	private HumanPlayer player = null;
-	
-	// Array to hold the ComputerPlayers
-	private ArrayList<ComputerPlayer> ai = new ArrayList<ComputerPlayer>();
+	// Array to hold the Players
+	private ArrayList<Player> players = new ArrayList<Player>();
 	
 	// Map to hold all the different characters and their related Room objects
 	private Map<Character, Room> roomMap = new HashMap<Character, Room>();
@@ -89,16 +86,20 @@ public class Board {
 
 				roomMap.put(array[2].charAt(0), new Room(array[1], type));
 
-			} else if (array[0].equals("Weapon") || array[0].equals("Person")) {
-				if (array[0].equals("Weapon")) cards.add(new Card(array[1], Card.CardType.WEAPON));
-				else {
-					if (player == null) player = new HumanPlayer(array[1], new Color(Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4])));
-					else ai.add(new ComputerPlayer(array[1], new Color(Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4]))));
-					cards.add(new Card(array[1], Card.CardType.PERSON));
-				}
+			} else if (array[0].equals("Weapon")) {
+				cards.add(new Card(array[1], Card.CardType.WEAPON));
 
+			} else if (array[0].equals("Person")) {
+				Color color =  new Color(Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4]));
+				
+				if (players.isEmpty()) players.add(new ComputerPlayer(array[1], color));
+				else players.add(new ComputerPlayer(array[1], color));
+
+				cards.add(new Card(array[1], Card.CardType.PERSON));
+				
 			} else if (array[0].charAt(0) == '/') {
-				continue;
+			continue;
+			
 			} else {
 				throw new BadConfigFormatException(setupConfigFile);
 			}
@@ -208,16 +209,8 @@ public class Board {
 		
 		solution = new Solution(solutionHold[0], solutionHold[1], solutionHold[2]);
 		
-		while (!deck.isEmpty()) {
-			currCard = rnd.nextInt(deck.size());
-			
-			player.addCard(deck.get(currCard));
-			
-			deck.remove(currCard);
-			
-			if (deck.isEmpty()) break;
-			
-			for (var i : ai) {
+		while (!deck.isEmpty()) {			
+			for (var i : players) {
 				currCard = rnd.nextInt(deck.size());
 				
 				i.addCard(deck.get(currCard));
@@ -228,7 +221,7 @@ public class Board {
 			}
 		}
 	}
-
+	
 	// Calculates all possible targets for the start cell given the pathlength
 	public void calcTargets(BoardCell startCell, int pathlength) {
 		visited.add(startCell);
@@ -262,17 +255,29 @@ public class Board {
 		}
 	}
 	
-	public boolean checkAccusation(Solution suggestion) {
-		if (suggestion.getPerson() == solution.getPerson() && suggestion.getWeapon() == solution.getWeapon() && suggestion.getRoom() == solution.getRoom()) return true;
+	// Checks whether any Player can dispute a suggestion
+	public Card handleSuggestion(Solution suggestion, Player accusor) {
+		return new Card("", Card.CardType.PERSON);
+	}
+
+	// Method to see whether an accusation is correct
+	public boolean checkAccusation(Solution accusation) {
+		if (accusation.getPerson().equals(solution.getPerson()) && accusation.getWeapon().equals(solution.getWeapon()) && accusation.getRoom().equals(solution.getRoom())) return true;
 		return false;
 	}
 
-	// Getters for board variables
+	// Setters for board variables
 	public void setConfigFiles(String layoutConfigFile, String setupConfigFile) {
 		this.layoutConfigFile = new String("data/" + layoutConfigFile);
 		this.setupConfigFile = new String("data/" + setupConfigFile);
 	}
+	
+	public void setPlayers(Player[] players) {
+		for (Player i : players)
+			this.players.add(i);
+	}
 
+	// Getters for board variables
 	public Room getRoom(BoardCell cell) {
 		return roomMap.get(cell.getInitial());
 	}
@@ -289,12 +294,8 @@ public class Board {
 		return cards;
 	}
 	
-	public HumanPlayer getHumanPlayer() {
-		return player;
-	}
-	
-	public ArrayList<ComputerPlayer> getComputerPlayers() {
-		return ai;
+	public ArrayList<Player> getPlayers() {
+		return players;
 	}
 	
 	public Solution getSolution() {
