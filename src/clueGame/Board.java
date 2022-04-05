@@ -24,10 +24,10 @@ public class Board {
 	private String layoutConfigFile, setupConfigFile;
 	
 	// Array to hold the Players
-	private ArrayList<Player> players = new ArrayList<Player>();
+	private ArrayList<Player> players;
 	
 	// Map to hold all the different characters and their related Room objects
-	private Map<Character, Room> roomMap = new HashMap<Character, Room>();
+	private Map<Character, Room> roomMap;
 	
 	// Sets to hold cards of different types for dealing
 	private ArrayList<Card> cards;
@@ -54,6 +54,10 @@ public class Board {
 
 	// Calls loadSetupConfig and loadLayoutConfig and catches their exceptions
 	public void initialize() {
+		roomMap  = new HashMap<Character, Room>();
+		players = new ArrayList<Player>();
+		cards = new ArrayList<Card>();
+		
 		try {
 			this.loadSetupConfig();
 			this.loadLayoutConfig();
@@ -66,8 +70,6 @@ public class Board {
 
 	// Properly loads the setup file
 	public void loadSetupConfig() throws FileNotFoundException, BadConfigFormatException{
-		cards = new ArrayList<Card>();
-		
 		FileReader reader = new FileReader(setupConfigFile);
 
 		Scanner in = new Scanner(reader);
@@ -270,7 +272,7 @@ public class Board {
 
 	// Method to see whether an accusation is correct
 	public boolean checkAccusation(Solution accusation) {
-		if (accusation.getPerson().equals(solution.getPerson()) && accusation.getWeapon().equals(solution.getWeapon()) && accusation.getRoom().equals(solution.getRoom())) return true;
+		if (accusation.equals(solution)) return true;
 		return false;
 	}
 

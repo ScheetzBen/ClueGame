@@ -12,6 +12,17 @@ public class Solution {
 		this.person = person;
 		this.weapon = weapon;
 	}
+	
+	@Override
+	public boolean equals(Object target) {
+		if (target == this) return true;
+		if (!(target instanceof Solution)) return false;
+		
+		Solution c = (Solution) target;
+		
+		if (this.room.equals(c.getRoom()) && this.person.equals(c.getPerson()) && this.weapon.equals(c.getWeapon())) return true;
+		else return false;
+	}
 
 	// Getters for Solution
 	public Card getRoom() {
@@ -38,5 +49,4 @@ public class Solution {
 	public void setWeapon(Card weapon) {
 		this.weapon = weapon;
 	}
-	
 }

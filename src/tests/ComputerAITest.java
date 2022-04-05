@@ -2,8 +2,6 @@ package tests;
 
 import static org.junit.Assert.*;
 
-import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -14,8 +12,6 @@ import clueGame.BoardCell;
 import clueGame.Solution;
 import clueGame.Card;
 import clueGame.ComputerPlayer;
-import clueGame.HumanPlayer;
-import clueGame.Player;
 
 public class ComputerAITest {
 	private static Board board;
@@ -37,7 +33,7 @@ public class ComputerAITest {
 		
 		currPlayer.setPosition(2, 2);
 		
-		Solution currSugg = currPlayer.createSuggestion();
+		Solution currSugg = currPlayer.createSuggestion(board);
 		
 		// Testing that the room the ComputerPlayer is in appears in the suggestion created
 		assertEquals(board.getRoom(currPlayer.getRow(), currPlayer.getColumn()).getCard(), currSugg.getRoom());
@@ -59,7 +55,7 @@ public class ComputerAITest {
 		currPlayer.addSeen(new Card("Knife", Card.CardType.WEAPON));
 		currPlayer.addSeen(new Card("Charlie", Card.CardType.PERSON));
 		
-		currSugg = currPlayer.createSuggestion();
+		currSugg = currPlayer.createSuggestion(board);
 		
 		assertEquals(new Card("Jan", Card.CardType.PERSON), currSugg.getPerson());
 		assertEquals(new Card("Hammer", Card.CardType.WEAPON), currSugg.getWeapon());
@@ -78,7 +74,7 @@ public class ComputerAITest {
 		
 		boolean targetCorrect = false;
 		
-		BoardCell selected = currPlayer.selectTarget(targets);
+		BoardCell selected = currPlayer.selectTarget(targets, board);
 		
 		// Testing that random target was selected
 		for (var i : targets) {
@@ -92,15 +88,19 @@ public class ComputerAITest {
 		// Roll of 3 includes 2 rooms 1 is seen
 		board.calcTargets(board.getCell(currPlayer.getRow(), currPlayer.getColumn()), 3);
 		
+		targets = board.getTargets();
+		
 		// Test whether the ComputerPlayer entered the unseen Room
-		assertEquals(board.getRoom('R'), board.getRoom(currPlayer.selectTarget(targets)));
+		assertEquals(board.getRoom('R'), board.getRoom(currPlayer.selectTarget(targets, board)));
 		
 		currPlayer.addSeen(new Card("Room", Card.CardType.ROOM));
 		
 		// Roll of 3 includes 2 Rooms both are seen
 		board.calcTargets(board.getCell(currPlayer.getRow(), currPlayer.getColumn()), 3);
 		
-		selected = currPlayer.selectTarget(targets);
+		targets = board.getTargets();
+		
+		selected = currPlayer.selectTarget(targets, board);
 		
 		targetCorrect = false;
 		
