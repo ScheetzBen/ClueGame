@@ -18,6 +18,13 @@ public abstract class Player {
 		this.color = color;
 	}
 	
+	public Player(String name, Color color, int row, int column) {
+		this.name = name;
+		this.color = color;
+		this.row = row;
+		this.column = column;
+	}
+	
 	public Card disproveSuggestion(Solution suggestion) {
 		Card[] sugg = new Card[3];
 		

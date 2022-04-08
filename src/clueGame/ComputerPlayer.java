@@ -11,6 +11,10 @@ public class ComputerPlayer extends Player{
 		super(name, color);
 	}
 	
+	public ComputerPlayer(String name, Color color, int row, int column) {
+		super(name, color, row, column);
+	}
+	
 	public Solution createSuggestion(Board board) {
 		Solution temp = new Solution(null, null, null);
 		
