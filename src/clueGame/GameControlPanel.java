@@ -12,11 +12,11 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 public class GameControlPanel extends JPanel {
+	// Variables to hold the top and bottom panel for the control GUI
 	private JPanel topPanel = new JPanel(new GridLayout(0, 4));
 	private JPanel bottomPanel = new JPanel(new GridLayout(0, 2));
-	/**
-	 * Constructor for the panel, it does 90% of the work
-	 */
+	
+	// Constructor initializes all Panels
 	public GameControlPanel()  {
 		setLayout(new GridLayout(2, 0));
 		
@@ -40,6 +40,7 @@ public class GameControlPanel extends JPanel {
 		this.add(bottomPanel);
 	}
 	
+	// Helper class to remove code duplication for guess and guess result panels
 	public JPanel etchedBorderPanel(String title) {
 		JPanel panel = new JPanel(new GridLayout(1, 0));
 		
@@ -50,6 +51,7 @@ public class GameControlPanel extends JPanel {
 		return panel;
 	}
 	
+	// sets the current Player's name and their Roll in the GUI
 	public void setTurn(Player currPlayer, Integer roll) {
 		JPanel currPanel = (JPanel) topPanel.getComponent(0);
 		JTextField currText = (JTextField) currPanel.getComponent(1);
@@ -64,6 +66,7 @@ public class GameControlPanel extends JPanel {
 		this.updateUI();
 	}
 	
+	// sets the current Player's guess
 	public void setGuess(String text) {
 		JPanel currPanel = (JPanel) bottomPanel.getComponent(0);
 		JTextField currText = (JTextField) currPanel.getComponent(0);
@@ -73,6 +76,7 @@ public class GameControlPanel extends JPanel {
 		this.updateUI();
 	}
 	
+	// sets the guess result for the current Player's guess
 	public void setGuessResult(String text) {
 		JPanel currPanel = (JPanel) bottomPanel.getComponent(1);
 		JTextField currText = (JTextField) currPanel.getComponent(0);
@@ -93,7 +97,7 @@ public class GameControlPanel extends JPanel {
 		
 		// test filling in the data
 		panel.setTurn(new ComputerPlayer( "Col. Mustard", Color.ORANGE, 0, 0), 5);
-		panel.setGuess( "I have no guess!");
+		panel.setGuess("I have no guess!");
 		panel.setGuessResult( "So you have nothing?");
 	}
 }
