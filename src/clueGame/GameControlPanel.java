@@ -17,7 +17,7 @@ public class GameControlPanel extends JPanel {
 	private JPanel bottomPanel = new JPanel(new GridLayout(0, 2));
 	
 	// Constructor initializes all Panels
-	public GameControlPanel()  {
+	public GameControlPanel() {
 		setLayout(new GridLayout(2, 0));
 		
 		JPanel turnInfo = new JPanel(new GridLayout(2, 0));
@@ -41,7 +41,7 @@ public class GameControlPanel extends JPanel {
 	}
 	
 	// Helper class to remove code duplication for guess and guess result panels
-	public JPanel etchedBorderPanel(String title) {
+	private JPanel etchedBorderPanel(String title) {
 		JPanel panel = new JPanel(new GridLayout(1, 0));
 		
 		panel.setBorder(new TitledBorder(new EtchedBorder(), title));
