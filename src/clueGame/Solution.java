@@ -13,6 +13,7 @@ public class Solution {
 		this.weapon = weapon;
 	}
 	
+	// Overridden function to test the equality of the Cards from one solution to another
 	@Override
 	public boolean equals(Object target) {
 		if (target == this) return true;

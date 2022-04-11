@@ -18,6 +18,7 @@ public abstract class Player {
 		this.color = color;
 	}
 	
+	// Constructor which can also set the row and column of the Player
 	public Player(String name, Color color, int row, int column) {
 		this.name = name;
 		this.color = color;
@@ -25,6 +26,7 @@ public abstract class Player {
 		this.column = column;
 	}
 	
+	// Function to see if a player can disprove a suggestion
 	public Card disproveSuggestion(Solution suggestion) {
 		Card[] sugg = new Card[3];
 		
@@ -34,9 +36,10 @@ public abstract class Player {
 		
 		ArrayList<Card> disproveHold = new ArrayList<Card>();
 		
-		for (Card i : sugg) {
-			for (Card j : this.cards) {
-				if (i.equals(j)) disproveHold.add(j);
+		// For loop checks if any card in the hand matched any card in suggested
+		for (Card suggCards : sugg) {
+			for (Card hand : this.cards) {
+				if (suggCards.equals(hand)) disproveHold.add(hand);
 			}
 		}
 		

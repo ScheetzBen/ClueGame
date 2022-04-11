@@ -7,14 +7,17 @@ import java.util.Set;
 
 public class ComputerPlayer extends Player{
 	
+	// Constructor to set the name and color of a ComputerPlayer
 	public ComputerPlayer(String name, Color color) {
 		super(name, color);
 	}
 	
+	// Constructor which can also set the position of a ComputerPlayer
 	public ComputerPlayer(String name, Color color, int row, int column) {
 		super(name, color, row, column);
 	}
 	
+	// Function to randomly make a suggestion based on the Room the ComputerPlayer is in
 	public Solution createSuggestion(Board board) {
 		Solution temp = new Solution(null, null, null);
 		
@@ -34,6 +37,7 @@ public class ComputerPlayer extends Player{
 		return temp;
 	}
 	
+	// Function to randomly select a target given a list of possible targets
 	public BoardCell selectTarget(Set<BoardCell> targets, Board board) {
 		for (var i : targets) {
 			if (i.isRoomCenter() && !getSeen().contains(board.getRoom(i).getCard())) return i;
@@ -46,6 +50,8 @@ public class ComputerPlayer extends Player{
 		return tempTargets.get(rnd.nextInt(tempTargets.size()));
 	}
 
+	// Abstract method inherited from Player
+	// Not currently implemented
 	@Override
 	void updateHand() {
 		// TODO Auto-generated method stub

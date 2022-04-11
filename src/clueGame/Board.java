@@ -32,6 +32,7 @@ public class Board {
 	// Sets to hold cards of different types for dealing
 	private ArrayList<Card> cards;
 	
+	// A Solution object which will hold the solution
 	private Solution solution;
 
 	// static variable of Board so that there is only ever one Board object created when the program is running
@@ -77,6 +78,7 @@ public class Board {
 		while (in.hasNext()) {
 			String[] array = in.nextLine().split(", ");
 
+			// if else statements handle all different Cards possible in ClueSetup.txt
 			if (array[0].equals("Room") || array[0].equals("Space")) {
 				Room.TileType type;
 
@@ -128,13 +130,16 @@ public class Board {
 
 		numRows = rows.size();
 		numColumns = rows.get(0).length;
-
+		
+		// Checking that all rows in the document have the same number of columns
+		// for loop checks the size of all elements in rows
 		for (String[] i : rows) {
 			if (i.length != numColumns) throw new BadConfigFormatException(layoutConfigFile);
 		}
 
 		grid = new BoardCell[numRows][numColumns];
 
+		// Nested for loop just run for all cells in grid and checks they are a valid Space and sets their DoorDirection;
 		for (int row = 0; row < grid.length; row++) {
 			for(int col = 0; col < grid[row].length; col++) {
 				if (!roomMap.containsKey(rows.get(row)[col].charAt(0))) throw new BadConfigFormatException(layoutConfigFile);
@@ -189,39 +194,33 @@ public class Board {
 		Random rnd = new Random();
 		
 		ArrayList<Card> deck = new ArrayList<Card>(cards);
+
+		solution = new Solution(getRandomCard(rnd, deck, Card.CardType.PERSON), getRandomCard(rnd, deck, Card.CardType.WEAPON), getRandomCard(rnd, deck, Card.CardType.ROOM));
 		
-		int currCard = rnd.nextInt(deck.size());
-		
-		Card[] solutionHold = new Card[3];
-		
-		while (deck.get(currCard).getType() != Card.CardType.PERSON) currCard = rnd.nextInt(deck.size());
-		solutionHold[0] = deck.get(currCard);
-		deck.remove(currCard);
-		currCard = rnd.nextInt(deck.size());
-		
-		while (deck.get(currCard).getType() != Card.CardType.WEAPON) currCard = rnd.nextInt(deck.size());
-		solutionHold[1] = deck.get(currCard);
-		deck.remove(currCard);
-		currCard = rnd.nextInt(deck.size());
-		
-		while (deck.get(currCard).getType() != Card.CardType.ROOM) currCard = rnd.nextInt(deck.size());
-		solutionHold[2] = deck.get(currCard);
-		deck.remove(currCard);
-		currCard = rnd.nextInt(deck.size());
-		
-		solution = new Solution(solutionHold[0], solutionHold[1], solutionHold[2]);
-		
+		// while loop deal the rest of the cards into player hands
 		while (!deck.isEmpty()) {			
-			for (var i : players) {
-				currCard = rnd.nextInt(deck.size());
+			for (var player : players) {
+				int currCard = rnd.nextInt(deck.size());
 				
-				i.addCard(deck.get(currCard));
+				player.addCard(deck.get(currCard));
 				
 				deck.remove(currCard);
 				
 				if (deck.isEmpty()) break;
 			}
 		}
+	}
+	
+	// Helper class to remove code duplication
+	// Function returns a random Card of specified card type from a deck
+	private Card getRandomCard(Random rnd, ArrayList<Card> deck, Card.CardType type) {
+		int currCard = rnd.nextInt(deck.size());
+		
+		while (deck.get(currCard).getType() != type) currCard = rnd.nextInt(deck.size());
+		Card temp = deck.get(currCard);
+		deck.remove(currCard);
+		
+		return temp;
 	}
 	
 	// Calculates all possible targets for the start cell given the pathlength
@@ -259,10 +258,10 @@ public class Board {
 	
 	// Checks whether any Player can dispute a suggestion
 	public Card handleSuggestion(Solution suggestion, Player accusor) {
-		for (Player i : players) {
-			if (i == accusor) continue;
+		for (Player player : players) {
+			if (player == accusor) continue;
 			
-			Card tempCard = i.disproveSuggestion(suggestion);
+			Card tempCard = player.disproveSuggestion(suggestion);
 			
 			if (tempCard != null) return tempCard;
 		}
@@ -285,8 +284,8 @@ public class Board {
 	public void setPlayers(Player[] players) {
 		this.players.clear();
 		
-		for (Player i : players)
-			this.players.add(i);
+		for (Player player : players)
+			this.players.add(player);
 	}
 
 	// Getters for board variables

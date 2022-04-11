@@ -1,13 +1,16 @@
 package clueGame;
 
 public class Card {
+	// Variables to hold the name and type of a Card
 	private String cardName;
 	private CardType type;
 	
+	// Enumerator which gives the Card type
 	public enum CardType {
 		ROOM, PERSON, WEAPON;
 	}
 	
+	// Constructor to set the name and type of a Card
 	public Card(String cardName, CardType type) {
 		super();
 		
@@ -15,6 +18,7 @@ public class Card {
 		this.type = type;
 	}
 	
+	// Function to check if the name and type of 2 Cards match
 	@Override
 	public boolean equals(Object target) {
 		if (target == this) return true;

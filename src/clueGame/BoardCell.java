@@ -30,11 +30,6 @@ public class BoardCell {
 		this.initial = initial;
 	}
 
-	// Adds and adjacency to the adjacency list
-	public void addAdjacency(BoardCell cell) {
-		adjacencies.add(cell);
-	}
-
 	// returns the adjacency list
 	public Set<BoardCell> getAdjList() {
 		return adjacencies;
@@ -42,65 +37,67 @@ public class BoardCell {
 
 	// Initializes the adjacency list, used when a new Board is created
 	public void setAdjacencies(Board board) {
-		BoardCell currCell;
+		addAdjacency(true, 1, board);
 
-		if ((this.row - 1) >= 0) {
-			currCell = board.getCell(row - 1, column);
-			if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
-		}
+		addAdjacency(true, -1, board);
 
-		if ((this.row + 1) < board.getNumRows()) {
-			currCell = board.getCell(row + 1, column);
-			if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
-		}
+		addAdjacency(false, 1, board);
 
-		if ((this.column - 1) >= 0) {
-			currCell = board.getCell(row, column - 1);
-			if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
-		}
+		addAdjacency(false, -1, board);
+		
+		var direction = this.getDoorDirection().toString();
 
-		if ((this.column + 1) < board.getNumColumns()) {
-			currCell = board.getCell(row, column + 1);
-			if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.addAdjacency(currCell);
-		}
-
-		// Handles doorway adjacency
-		if (this.isDoorway()) {
-			var direction = this.getDoorDirection().toString();
-
-			switch(direction) {
-			case "^":
-				currCell = board.getCell(row - 1, column);
-				this.addAdjacency(board.getRoom(currCell).getCenterCell());
-				board.getRoom(currCell).getCenterCell().addAdjacency(this);
-				break;
-			case "v":
-				currCell = board.getCell(row + 1, column);
-				this.addAdjacency(board.getRoom(currCell).getCenterCell());
-				board.getRoom(currCell).getCenterCell().addAdjacency(this);
-				break;
-			case "<":
-				currCell = board.getCell(row, column - 1);
-				this.addAdjacency(board.getRoom(currCell).getCenterCell());
-				board.getRoom(currCell).getCenterCell().addAdjacency(this);
-				break;
-			case ">":
-				currCell = board.getCell(row, column + 1);
-				this.addAdjacency(board.getRoom(currCell).getCenterCell());
-				board.getRoom(currCell).getCenterCell().addAdjacency(this);
-				break;
-			}
+		switch(direction) {
+		case "^":
+			addDoorway(true, -1, board);
+			break;
+		case "v":
+			addDoorway(true, 1, board);
+			break;
+		case "<":
+			addDoorway(false, -1, board);
+			break;
+		case ">":
+			addDoorway(false, 1, board);
+			break;
 		}
 
 		// Handles secret passage adjacency
 		if (this.getSecretPassage() != ' ') {
-			currCell = board.getRoom(this).getCenterCell();
+			BoardCell currCell = board.getRoom(this).getCenterCell();
 
-			currCell.addAdjacency(board.getRoom(this.getSecretPassage()).getCenterCell());
+			currCell.adjacencies.add(board.getRoom(this.getSecretPassage()).getCenterCell());
 		}
 	}
+	
+	// Helper class to remove code duplication
+	// checks if cell is valid and adds it to the adjacency list
+	private void addAdjacency(boolean isRow, int where, Board board) {
+		BoardCell currCell = null;
+		
+		if (isRow) {
+			if (row + where >= 0 && row + where < board.getNumRows()) currCell = board.getCell(row + where, column);
+		} else {
+			if (column + where >= 0 && column + where < board.getNumColumns()) currCell = board.getCell(row, column + where);
+		}
+		
+		if (currCell != null)
+			if (board.getRoom(currCell).getType() != Room.TileType.ROOM && currCell.getInitial() != 'X') this.adjacencies.add(currCell);
+	}
+	
+	// Helper class to remove code duplication
+	// Properly handles doorway adjacencies and adds the doorway to the room adjacencies
+	private void addDoorway(boolean isRow, int where, Board board) {
+		BoardCell currCell;
+		
+		if (isRow) currCell = board.getCell(row + where, column);
+		else currCell = board.getCell(row, column + where);
 
-	// getters and setters for all BoardCell variables
+		this.adjacencies.add(board.getRoom(currCell).getCenterCell());
+		board.getRoom(currCell).getCenterCell().adjacencies.add(this);
+	}
+
+	// Getters for BoardCell
 	public char getInitial() {
 		return initial;
 	}
@@ -130,7 +127,7 @@ public class BoardCell {
 		return isOccupied;
 	}
 
-	//Setters for board variables
+	// Setters for board variables
 	public void setSecretPassage(char secretPassage) {
 		this.secretPassage = secretPassage;
 	}
