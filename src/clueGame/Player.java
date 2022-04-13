@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -53,6 +54,13 @@ public abstract class Player {
 		}
 		
 		return null;
+	}
+	
+	public void draw(int height, int width, Graphics g) {
+		g.setColor(Color.BLACK);
+		g.fillOval((column + 1) * width - 1, (row + 1) * height - 1, width - 1, height - 1);
+		g.setColor(getColor());
+		g.fillOval((column + 1) * width, (row + 1) * height, width - 3, height - 3);
 	}
 	
 	// Abstract method used to update the hand of a Player

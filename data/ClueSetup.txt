@@ -24,4 +24,4 @@ Person, Jan, 0, 0, 255
 Person, Oralee, 255, 0, 0
 Person, Gary, 255, 200, 0
 Person, Kyle, 128, 128, 128
-Person, Mary, 255, 255, 0
+Person, Mary, 255, 255, 255

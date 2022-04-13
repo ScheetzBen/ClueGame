@@ -1,5 +1,9 @@
 package clueGame;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
 public class Room {
 	// Variables for Room
 	private String name;
@@ -21,6 +25,12 @@ public class Room {
 		this.card = card;
 	}
 
+	public void draw(int height, int width, int offset, Graphics g) {
+		g.setColor(Color.BLUE);
+		g.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		g.drawString(name, (labelCell.getColumn()) * width, (labelCell.getRow() + offset) * height + height);
+	}
+	
 	// Getters for Room variables
 	public String getName() {
 		return name;

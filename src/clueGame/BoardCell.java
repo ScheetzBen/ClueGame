@@ -1,5 +1,9 @@
 package clueGame;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -96,6 +100,51 @@ public class BoardCell {
 		this.adjacencies.add(board.getRoom(currCell).getCenterCell());
 		board.getRoom(currCell).getCenterCell().adjacencies.add(this);
 	}
+	
+	// Function which allows the cell to draw itself in the board Panel
+	public void draw(int height, int width, Graphics g) {
+		switch (initial) {
+			case 'X':
+				break;
+			case 'W':
+				g.setColor(Color.YELLOW);
+				g.fillRect((column + 1) * width, (row + 1) * height, width - 2, height - 2);
+				
+				if (isDoorway()) {
+					g.setColor(Color.BLUE);
+					switch (doorDirection) {
+					case UP:
+						g.fillRect((column + 1) * width, ((row + 1) * height) - 4, width - 2, 3);
+						break;
+					case DOWN:
+						g.fillRect((column + 1) * width, (row + 1) * height + height - 1, width - 2, 3);
+						break;
+					case LEFT:
+						g.fillRect(((column + 1) * width) - 4, ((row + 1) * height), 3, height - 2);
+						break;
+					case RIGHT:
+						g.fillRect(((column + 1) * width) + width - 1, (row + 1) * height, 3, height - 2);
+						break;
+					default:
+						break;
+					}
+				}
+				
+				break;
+			default:
+				if (getSecretPassage() != ' ') {
+					g.setColor(Color.YELLOW);
+					g.fillRect(((column + 1) * width) + 2, ((row + 1) * height) + 5, width - 6, height - 5);
+					g.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+					g.setColor(Color.BLUE);
+					g.drawString("S", ((column + 1) * width) + width / 3, ((row + 2) * height) - height / 4);
+					break;
+				}
+				
+				g.setColor(Color.GRAY);
+				g.fillRect(((column + 1) * width) - 1, ((row + 1) * height) - 1, width, height);
+		}
+	}
 
 	// Getters for BoardCell
 	public char getInitial() {
@@ -108,6 +157,14 @@ public class BoardCell {
 
 	public DoorDirection getDoorDirection() {
 		return doorDirection;
+	}
+	
+	public int getRow() {
+		return row;
+	}
+	
+	public int getColumn() {
+		return column;
 	}
 
 	public boolean isDoorway() {

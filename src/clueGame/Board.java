@@ -1,6 +1,9 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
@@ -9,9 +12,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+
+import javax.swing.JPanel;
+
 import java.util.ArrayList;
 
-public class Board {
+public class Board extends JPanel{
 	// Variables for Board
 	
 	// Initialize a grid array to hold all the cell in the board
@@ -28,6 +34,7 @@ public class Board {
 	
 	// Map to hold all the different characters and their related Room objects
 	private Map<Character, Room> roomMap;
+	private ArrayList<Room> rooms;
 	
 	// Sets to hold cards of different types for dealing
 	private ArrayList<Card> cards;
@@ -42,8 +49,7 @@ public class Board {
 	private Set<BoardCell> targets = new HashSet<BoardCell>();
 	private Set<BoardCell> visited = new HashSet<BoardCell>();
 
-	// Constructor for Board creates new BoardCells for all spots in the grid
-	// Also calls setAdjacencies for all cells in the grid
+	// Constructor for Board
 	private Board() {
 		super();
 	}
@@ -56,6 +62,7 @@ public class Board {
 	// Calls loadSetupConfig and loadLayoutConfig and catches their exceptions
 	public void initialize() {
 		roomMap  = new HashMap<Character, Room>();
+		rooms = new ArrayList<Room>();
 		players = new ArrayList<Player>();
 		cards = new ArrayList<Card>();
 		
@@ -85,10 +92,11 @@ public class Board {
 				if (array[0].equals("Room")) {
 					type = Room.TileType.ROOM;
 					cards.add(new Card(array[1], Card.CardType.ROOM));
+					rooms.add(new Room(array[1], type, cards.get(cards.size() - 1)));
 
 				} else type = Room.TileType.SPACE;
 
-				roomMap.put(array[2].charAt(0), new Room(array[1], type, cards.get(cards.size() - 1)));
+				roomMap.put(array[2].charAt(0), rooms.get(rooms.size() - 1));
 
 			} else if (array[0].equals("Weapon")) {
 				cards.add(new Card(array[1], Card.CardType.WEAPON));
@@ -145,6 +153,19 @@ public class Board {
 				if (!roomMap.containsKey(rows.get(row)[col].charAt(0))) throw new BadConfigFormatException(layoutConfigFile);
 
 				grid[row][col] = new BoardCell(row, col, rows.get(row)[col].charAt(0));
+				
+				if (row == 0 && col == 7)
+					players.get(0).setPosition(row, col);
+				else if (row == 2 && col == 18)
+					players.get(1).setPosition(row, col);
+				else if (row == 12 && col == 3) 
+					players.get(2).setPosition(row, col);
+				else if (row == 15 && col == 15)
+					players.get(3).setPosition(row, col);
+				else if (row == 7 && col == 16)
+					players.get(4).setPosition(row, col);
+				else if (row == 7 && col == 7)
+					players.get(5).setPosition(row, col);
 
 				if (rows.get(row)[col].length() > 1) {
 					char specialType = rows.get(row)[col].charAt(1);
@@ -180,10 +201,10 @@ public class Board {
 		}
 
 		// Initializes the adjacency list for all the cells in the grid
-		for (int row = 0; row < grid.length; row++) {
-			for(int col = 0; col < grid[row].length; col++) {
-				if ((getRoom(row, col).getType() == Room.TileType.SPACE && getCell(row, col).getInitial() != 'X') || getCell(row, col).getSecretPassage() != ' ')
-					getCell(row, col).setAdjacencies(this);
+		for (BoardCell[] row : grid) {
+			for(BoardCell cell : row) {
+				if ((getRoom(cell).getType() == Room.TileType.SPACE && cell.getInitial() != 'X') || cell.getSecretPassage() != ' ')
+					cell.setAdjacencies(this);
 			}
 		}
 		in.close();
@@ -273,6 +294,42 @@ public class Board {
 	public boolean checkAccusation(Solution accusation) {
 		if (accusation.equals(solution)) return true;
 		return false;
+	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		
+		int cellHeight = (getHeight()) / (numRows + 2);
+		int cellWidth = (getWidth()) / (numColumns + 2);
+		
+		ArrayList<BoardCell> doors = new ArrayList<BoardCell>();
+		
+		for (BoardCell[] row : grid) {
+			for (BoardCell cell : row) {
+				if (cell.isDoorway()) {
+					doors.add(cell);
+					continue;
+				}
+				
+				cell.draw(cellHeight, cellWidth, g);
+			}
+		}
+		
+		for (BoardCell cell : doors) {
+			cell.draw(cellHeight, cellWidth, g);
+		}
+		
+		for (Player player: players) {
+			player.draw(cellHeight, cellWidth, g);
+		}
+		
+		for (var room : rooms) {
+			room.draw(cellHeight, cellWidth, 1, g);
+		}
 	}
 
 	// Setters for board variables
