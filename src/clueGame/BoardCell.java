@@ -104,14 +104,15 @@ public class BoardCell {
 	}
 	
 	// Function which allows the cell to draw itself in the board Panel
-	public void draw(int height, int width, Graphics g) {
+	public void draw(int height, int width, Graphics g, Board board) {
 		switch (initial) {
 			case 'X':
 				break;
 			case 'W':
-				if (flag)
+				if (flag) {
 					g.setColor(Color.CYAN);
-				else
+					flag = false;
+				} else
 					g.setColor(Color.YELLOW);
 				
 				g.fillRect((column + 1) * width, (row + 1) * height, width - 2, height - 2);
@@ -147,7 +148,9 @@ public class BoardCell {
 					break;
 				}
 				
-				g.setColor(Color.GRAY);
+				if (board.getRoom(this).getCenterCell().isFlagged()) g.setColor(Color.CYAN);
+				else g.setColor(Color.GRAY);
+				
 				g.fillRect(((column + 1) * width) - 1, ((row + 1) * height) - 1, width, height);
 		}
 	}
@@ -171,6 +174,10 @@ public class BoardCell {
 	
 	public int getColumn() {
 		return column;
+	}
+	
+	public boolean isFlagged() {
+		return flag;
 	}
 
 	public boolean isDoorway() {

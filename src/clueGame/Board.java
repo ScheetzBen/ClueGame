@@ -16,6 +16,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import clueGame.Room.TileType;
+
 import java.util.ArrayList;
 
 public class Board extends JPanel{
@@ -90,17 +92,14 @@ public class Board extends JPanel{
 			String[] array = in.nextLine().split(", ");
 
 			// if else statements handle all different Cards possible in ClueSetup.txt
-			if (array[0].equals("Room") || array[0].equals("Space")) {
-				Room.TileType type;
+			if (array[0].equals("Room")) {
+				cards.add(new Card(array[1], Card.CardType.ROOM));
 
-				if (array[0].equals("Room")) {
-					type = Room.TileType.ROOM;
-					cards.add(new Card(array[1], Card.CardType.ROOM));
-					rooms.add(new Room(array[1], type, cards.get(cards.size() - 1)));
-
-				} else type = Room.TileType.SPACE;
-
+				rooms.add(new Room(array[1], TileType.ROOM, cards.get(cards.size() - 1)));
 				roomMap.put(array[2].charAt(0), rooms.get(rooms.size() - 1));
+					
+			} else if (array[0].equals("Space")) {
+				roomMap.put(array[2].charAt(0), new Room(array[1], Room.TileType.SPACE, cards.get(cards.size() - 1)));
 
 			} else if (array[0].equals("Weapon")) {
 				cards.add(new Card(array[1], Card.CardType.WEAPON));
@@ -317,12 +316,12 @@ public class Board extends JPanel{
 					continue;
 				}
 				
-				cell.draw(cellHeight, cellWidth, g);
+				cell.draw(cellHeight, cellWidth, g, this);
 			}
 		}
 		
 		for (BoardCell cell : doors) {
-			cell.draw(cellHeight, cellWidth, g);
+			cell.draw(cellHeight, cellWidth, g, this);
 		}
 		
 		for (Player player: players) {
@@ -341,19 +340,21 @@ public class Board extends JPanel{
 			if (!targets.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Please finish your turn");
 				return;
+			} else {
+				int currRoll = roll();
+
+				gcPanel.setTurn(currPlayer, currRoll);
+
+				calcTargets(getCell(currPlayer.getRow(), currPlayer.getColumn()), currRoll);
+				
+				System.out.println(targets.size());
+
+				for (BoardCell target : targets) {
+					target.flag();
+				}
+
+				repaint();
 			}
-			
-			int currRoll = roll();
-			
-			gcPanel.setTurn(currPlayer, currRoll);
-			
-			calcTargets(getCell(currPlayer.getRow(), currPlayer.getColumn()), currRoll);
-			
-			for (var target : targets) {
-				target.flag();
-			}
-			
-			repaint();
 		}
 	}
 	
