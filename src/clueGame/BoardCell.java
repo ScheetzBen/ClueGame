@@ -22,6 +22,8 @@ public class BoardCell {
 
 	// isOccupied is true if the cell is currently occupied
 	private boolean isOccupied = false;
+	
+	private boolean flag = false;
 
 	// Hold the cell's adjacencies, is populated in the board constructor
 	private Set<BoardCell> adjacencies = new HashSet<BoardCell>();
@@ -107,7 +109,11 @@ public class BoardCell {
 			case 'X':
 				break;
 			case 'W':
-				g.setColor(Color.YELLOW);
+				if (flag)
+					g.setColor(Color.CYAN);
+				else
+					g.setColor(Color.YELLOW);
+				
 				g.fillRect((column + 1) * width, (row + 1) * height, width - 2, height - 2);
 				
 				if (isDoorway()) {
@@ -185,6 +191,10 @@ public class BoardCell {
 	}
 
 	// Setters for board variables
+	public void flag() {
+		flag = true;
+	}
+	
 	public void setSecretPassage(char secretPassage) {
 		this.secretPassage = secretPassage;
 	}

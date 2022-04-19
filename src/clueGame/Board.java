@@ -2,8 +2,8 @@ package clueGame;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.util.ArrayList;
@@ -48,7 +49,10 @@ public class Board extends JPanel{
 	// Sets to hold information for calculating targets
 	private Set<BoardCell> targets = new HashSet<BoardCell>();
 	private Set<BoardCell> visited = new HashSet<BoardCell>();
-
+	
+	private int playerNum = 0;
+	
+	private Random rnd = new Random();
 	// Constructor for Board
 	private Board() {
 		super();
@@ -104,7 +108,7 @@ public class Board extends JPanel{
 			} else if (array[0].equals("Person")) {
 				Color color =  new Color(Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4]));
 				
-				if (players.isEmpty()) players.add(new ComputerPlayer(array[1], color));
+				if (players.isEmpty()) players.add(new HumanPlayer(array[1], color));
 				else players.add(new ComputerPlayer(array[1], color));
 
 				cards.add(new Card(array[1], Card.CardType.PERSON));
@@ -212,11 +216,9 @@ public class Board extends JPanel{
 	
 	// Deals the cards evenly to all players
 	public void deal() {
-		Random rnd = new Random();
-		
 		ArrayList<Card> deck = new ArrayList<Card>(cards);
 
-		solution = new Solution(getRandomCard(rnd, deck, Card.CardType.PERSON), getRandomCard(rnd, deck, Card.CardType.WEAPON), getRandomCard(rnd, deck, Card.CardType.ROOM));
+		solution = new Solution(getRandomCard(deck, Card.CardType.PERSON), getRandomCard(deck, Card.CardType.WEAPON), getRandomCard(deck, Card.CardType.ROOM));
 		
 		// while loop deal the rest of the cards into player hands
 		while (!deck.isEmpty()) {			
@@ -234,7 +236,7 @@ public class Board extends JPanel{
 	
 	// Helper class to remove code duplication
 	// Function returns a random Card of specified card type from a deck
-	private Card getRandomCard(Random rnd, ArrayList<Card> deck, Card.CardType type) {
+	private Card getRandomCard(ArrayList<Card> deck, Card.CardType type) {
 		int currCard = rnd.nextInt(deck.size());
 		
 		while (deck.get(currCard).getType() != type) currCard = rnd.nextInt(deck.size());
@@ -331,6 +333,33 @@ public class Board extends JPanel{
 			room.draw(cellHeight, cellWidth, 1, g);
 		}
 	}
+	
+	public void handleTurn(GameControlPanel gcPanel) {
+		Player currPlayer = players.get(playerNum);
+		
+		if (currPlayer instanceof HumanPlayer) {
+			if (!targets.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Please finish your turn");
+				return;
+			}
+			
+			int currRoll = roll();
+			
+			gcPanel.setTurn(currPlayer, currRoll);
+			
+			calcTargets(getCell(currPlayer.getRow(), currPlayer.getColumn()), currRoll);
+			
+			for (var target : targets) {
+				target.flag();
+			}
+			
+			repaint();
+		}
+	}
+	
+	private int roll() {
+		return rnd.nextInt(6) + 1;
+	}
 
 	// Setters for board variables
 	public void setConfigFiles(String layoutConfigFile, String setupConfigFile) {
@@ -393,5 +422,11 @@ public class Board extends JPanel{
 		targets = new HashSet<BoardCell>();
 		visited = new HashSet<BoardCell>();
 		return temp;
+	}
+	
+	private class BoardListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			
+		}
 	}
 }

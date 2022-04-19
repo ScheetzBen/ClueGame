@@ -2,10 +2,13 @@ package clueGame;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
@@ -15,9 +18,15 @@ public class GameControlPanel extends JPanel {
 	// Variables to hold the top and bottom panel for the control GUI
 	private JPanel topPanel = new JPanel(new GridLayout(0, 4));
 	private JPanel bottomPanel = new JPanel(new GridLayout(0, 2));
+	private JButton accusationButton = new JButton("Make Accusation");
+	private JButton nextButton = new JButton("Next");
+	
+	private Board board;
 	
 	// Constructor initializes all Panels
-	public GameControlPanel() {
+	public GameControlPanel(Board board) {
+		this.board = board;
+		
 		setLayout(new GridLayout(2, 0));
 		
 		JPanel turnInfo = new JPanel(new GridLayout(2, 0));
@@ -30,8 +39,9 @@ public class GameControlPanel extends JPanel {
 		
 		topPanel.add(turnInfo);
 		topPanel.add(rollInfo);
-		topPanel.add(new JButton("Make Accusation"));
-		topPanel.add(new JButton("Next"));
+		topPanel.add(accusationButton);
+		topPanel.add(nextButton);
+		nextButton.addActionListener(new NextListener());
 		
 		bottomPanel.add(etchedBorderPanel("Guess"));
 		bottomPanel.add(etchedBorderPanel("Guess Result"));
@@ -86,9 +96,19 @@ public class GameControlPanel extends JPanel {
 		this.updateUI();
 	}
 	
+	public void nextPressed() {
+		board.handleTurn(this);
+	}
+	
+	private class NextListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			nextPressed();
+		}
+	}
+	
 
 	public static void main(String[] args) {
-		GameControlPanel panel = new GameControlPanel();  // create the panel
+		GameControlPanel panel = new GameControlPanel(Board.getInstance());  // create the panel
 		JFrame frame = new JFrame();  // create the frame 
 		frame.setContentPane(panel); // put the panel in the frame
 		frame.setSize(750, 180);  // size the frame
