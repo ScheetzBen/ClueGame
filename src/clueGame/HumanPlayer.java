@@ -9,6 +9,10 @@ public class HumanPlayer extends Player{
 		super(name, color);
 	}
 	
+	public HumanPlayer(String name, Color color, int row, int column) {
+		super(name, color, row, column);
+	}
+	
 	// Abstract method inherited from Player
 	// Not currently implemented
 	@Override

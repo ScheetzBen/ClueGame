@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
@@ -58,6 +60,7 @@ public class Board extends JPanel{
 	// Constructor for Board
 	private Board() {
 		super();
+		addMouseListener(new BoardListener());
 	}
 
 	// Returns the one Board instance
@@ -107,8 +110,8 @@ public class Board extends JPanel{
 			} else if (array[0].equals("Person")) {
 				Color color =  new Color(Integer.parseInt(array[2]), Integer.parseInt(array[3]), Integer.parseInt(array[4]));
 				
-				if (players.isEmpty()) players.add(new HumanPlayer(array[1], color));
-				else players.add(new ComputerPlayer(array[1], color));
+				if (players.isEmpty()) players.add(new HumanPlayer(array[1], color, Integer.parseInt(array[5]), Integer.parseInt(array[6])));
+				else players.add(new ComputerPlayer(array[1], color, Integer.parseInt(array[5]), Integer.parseInt(array[6])));
 
 				cards.add(new Card(array[1], Card.CardType.PERSON));
 				
@@ -156,19 +159,6 @@ public class Board extends JPanel{
 				if (!roomMap.containsKey(rows.get(row)[col].charAt(0))) throw new BadConfigFormatException(layoutConfigFile);
 
 				grid[row][col] = new BoardCell(row, col, rows.get(row)[col].charAt(0));
-				
-				if (row == 0 && col == 7)
-					players.get(0).setPosition(row, col);
-				else if (row == 2 && col == 18)
-					players.get(1).setPosition(row, col);
-				else if (row == 12 && col == 3) 
-					players.get(2).setPosition(row, col);
-				else if (row == 15 && col == 15)
-					players.get(3).setPosition(row, col);
-				else if (row == 7 && col == 16)
-					players.get(4).setPosition(row, col);
-				else if (row == 7 && col == 7)
-					players.get(5).setPosition(row, col);
 
 				if (rows.get(row)[col].length() > 1) {
 					char specialType = rows.get(row)[col].charAt(1);
@@ -297,6 +287,7 @@ public class Board extends JPanel{
 		return false;
 	}
 	
+	// Method which draws all the cells, room, and doors for the board
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -330,9 +321,11 @@ public class Board extends JPanel{
 		
 		for (var room : rooms) {
 			room.draw(cellHeight, cellWidth, 1, g);
+			room.getCenterCell().flag(false);
 		}
 	}
 	
+	// Method is called when the next button is clicked
 	public void handleTurn(GameControlPanel gcPanel) {
 		Player currPlayer = players.get(playerNum);
 		
@@ -346,20 +339,52 @@ public class Board extends JPanel{
 				gcPanel.setTurn(currPlayer, currRoll);
 
 				calcTargets(getCell(currPlayer.getRow(), currPlayer.getColumn()), currRoll);
-				
-				System.out.println(targets.size());
 
 				for (BoardCell target : targets) {
-					target.flag();
+					target.flag(true);
 				}
 
 				repaint();
 			}
+		} else {
+			ComputerPlayer player = (ComputerPlayer) currPlayer;
+			
+			int currRoll = roll();
+			
+			gcPanel.setTurn(currPlayer, currRoll);
+			
+			calcTargets(getCell(currPlayer.getRow(), currPlayer.getColumn()), currRoll);
+			
+			movePlayer(player.selectTarget(getTargets(), this));
 		}
 	}
 	
+	// helper method to generate a random roll between 1-6
 	private int roll() {
 		return rnd.nextInt(6) + 1;
+	}
+	
+	// Method is called when the HumanPlayer clicks the board
+	public void handleBoardClick(int x, int y) {
+		for (BoardCell cell: targets) {
+			if (cell.withinCell(x, y)) {
+				movePlayer(cell);
+				return;
+			}
+		}
+		
+		JOptionPane.showMessageDialog(null, "Please select a valid space");
+	}
+	
+	// Method which moves the player to the proper position
+	private void movePlayer(BoardCell cell) {
+		Player currPlayer = players.get(playerNum);
+		
+		currPlayer.setPosition(cell.getRow(), cell.getColumn());
+		
+		playerNum = (playerNum + 1) % 5;
+		
+		repaint();
 	}
 
 	// Setters for board variables
@@ -425,9 +450,24 @@ public class Board extends JPanel{
 		return temp;
 	}
 	
-	private class BoardListener implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			
+	// BoardListener class is used to alert Board when the mouse is pressed inside its panel
+	private class BoardListener implements MouseListener {
+		// Calls the proper function in Board when the mouse is clicked
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			handleBoardClick(e.getX(), e.getY());
 		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+
+		@Override
+		public void mouseExited(MouseEvent e) {}
 	}
 }

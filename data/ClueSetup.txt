@@ -19,9 +19,9 @@ Weapon, Pool Stick
 Weapon, Poison
 Weapon, Cable
 // People
-Person, Charlie, 0, 255, 0
-Person, Jan, 0, 0, 255
-Person, Oralee, 255, 0, 0
-Person, Gary, 255, 200, 0
-Person, Kyle, 128, 128, 128
-Person, Mary, 255, 255, 255
+Person, Charlie, 0, 255, 0, 0, 7
+Person, Jan, 0, 0, 255, 2, 18
+Person, Oralee, 255, 0, 0, 12, 3
+Person, Gary, 255, 200, 0, 15, 15
+Person, Kyle, 128, 128, 128, 7, 16
+Person, Mary, 255, 255, 255, 7, 7

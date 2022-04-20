@@ -96,10 +96,12 @@ public class GameControlPanel extends JPanel {
 		this.updateUI();
 	}
 	
+	// Called when next is pressed and calls the proper function inside of Board to handle it
 	public void nextPressed() {
 		board.handleTurn(this);
 	}
 	
+	// NextListener class calls the proper functions inside of GameControlPanel when the Next button is pressed
 	private class NextListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			nextPressed();

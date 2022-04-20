@@ -10,6 +10,8 @@ import java.util.Set;
 public class BoardCell {
 	// Variables for BoardCell
 	private int row, column;
+	
+	private int x, y, width, height;
 
 	// initial holds the Room char, secretPassage holds the Room char for the secret passage is there is one
 	private char initial, secretPassage = ' ';
@@ -105,6 +107,11 @@ public class BoardCell {
 	
 	// Function which allows the cell to draw itself in the board Panel
 	public void draw(int height, int width, Graphics g, Board board) {
+		x = (column + 1) * width;
+		this.width = width;
+		y = (row + 1) * height;
+		this.height = height;
+		
 		switch (initial) {
 			case 'X':
 				break;
@@ -148,11 +155,21 @@ public class BoardCell {
 					break;
 				}
 				
-				if (board.getRoom(this).getCenterCell().isFlagged()) g.setColor(Color.CYAN);
+				if (board.getRoom(this).getCenterCell().isFlagged()) {
+					g.setColor(Color.CYAN);
+				}
+				
 				else g.setColor(Color.GRAY);
 				
 				g.fillRect(((column + 1) * width) - 1, ((row + 1) * height) - 1, width, height);
 		}
+	}
+	
+	// Function which checks if an x, y value is within the cell's range
+	public boolean withinCell(int x, int y) {
+		if (x > this.x && x < this.x + width && y > this.y && y < this.y + height) 
+			return true;
+		return false;
 	}
 
 	// Getters for BoardCell
@@ -198,8 +215,8 @@ public class BoardCell {
 	}
 
 	// Setters for board variables
-	public void flag() {
-		flag = true;
+	public void flag(boolean flag) {
+		this.flag = flag;
 	}
 	
 	public void setSecretPassage(char secretPassage) {

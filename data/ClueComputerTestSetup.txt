@@ -8,5 +8,5 @@ Space, Walkway, W
 Weapon, Knife
 Weapon, Hammer
 // People
-Person, Charlie, 0, 255, 0
-Person, Jan, 0, 0, 255
+Person, Charlie, 0, 255, 0, 0, 0
+Person, Jan, 0, 0, 255, 1, 0
