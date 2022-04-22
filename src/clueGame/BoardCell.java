@@ -106,7 +106,7 @@ public class BoardCell {
 	}
 	
 	// Function which allows the cell to draw itself in the board Panel
-	public void draw(int height, int width, Graphics g, Board board) {
+	public void draw(int height, int width, int offset, Graphics g,  Board board) {
 		x = (column + 1) * width;
 		this.width = width;
 		y = (row + 1) * height;
@@ -122,22 +122,22 @@ public class BoardCell {
 				} else
 					g.setColor(Color.YELLOW);
 				
-				g.fillRect((column + 1) * width, (row + 1) * height, width - 2, height - 2);
+				g.fillRect((column + offset) * width, (row + offset) * height, width - 2, height - 2);
 				
 				if (isDoorway()) {
 					g.setColor(Color.BLUE);
 					switch (doorDirection) {
 					case UP:
-						g.fillRect((column + 1) * width, ((row + 1) * height) - 4, width - 2, 3);
+						g.fillRect((column + offset) * width, ((row + offset) * height) - 4, width - 2, 3);
 						break;
 					case DOWN:
-						g.fillRect((column + 1) * width, (row + 1) * height + height - 1, width - 2, 3);
+						g.fillRect((column + offset) * width, (row + offset) * height + height - 1, width - 2, 3);
 						break;
 					case LEFT:
-						g.fillRect(((column + 1) * width) - 4, ((row + 1) * height), 3, height - 2);
+						g.fillRect(((column + offset) * width) - 4, ((row + offset) * height), 3, height - 2);
 						break;
 					case RIGHT:
-						g.fillRect(((column + 1) * width) + width - 1, (row + 1) * height, 3, height - 2);
+						g.fillRect(((column + offset) * width) + width - 1, (row + offset) * height, 3, height - 2);
 						break;
 					default:
 						break;

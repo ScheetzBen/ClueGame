@@ -307,12 +307,12 @@ public class Board extends JPanel{
 					continue;
 				}
 				
-				cell.draw(cellHeight, cellWidth, g, this);
+				cell.draw(cellHeight, cellWidth, 1, g, this);
 			}
 		}
 		
 		for (BoardCell cell : doors) {
-			cell.draw(cellHeight, cellWidth, g, this);
+			cell.draw(cellHeight, cellWidth, 1, g, this);
 		}
 		
 		for (Player player: players) {
