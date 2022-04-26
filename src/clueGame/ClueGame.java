@@ -15,8 +15,12 @@ public class ClueGame extends JFrame{
 		setTitle("Clue Game");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		kcPanel = new KnownCardsPanel();
+		add(kcPanel, BorderLayout.EAST);
+		
 		bPanel = Board.getInstance();
 		bPanel.setConfigFiles("ClueLayout2.csv", "ClueSetup.txt");
+		bPanel.setKCPanel(kcPanel);
 		bPanel.initialize();
 		
 		add(bPanel, BorderLayout.CENTER);
@@ -24,8 +28,15 @@ public class ClueGame extends JFrame{
 		gcPanel = new GameControlPanel(bPanel);
 		add(gcPanel, BorderLayout.SOUTH);
 		
-		kcPanel = new KnownCardsPanel();
-		add(kcPanel, BorderLayout.EAST);
+		bPanel.setGCPanel(gcPanel);
+	}
+	
+	public GameControlPanel getGCPanel() {
+		return gcPanel;
+	}
+	
+	public KnownCardsPanel getKCPanel() {
+		return kcPanel;
 	}
 
 	public static void main(String[] args) {

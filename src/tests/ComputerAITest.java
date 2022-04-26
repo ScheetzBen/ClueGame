@@ -31,9 +31,9 @@ public class ComputerAITest {
 	public void createSuggestionTest() {
 		ComputerPlayer currPlayer = (ComputerPlayer) board.getPlayers().get(1);
 		
-		currPlayer.setPosition(2, 2);
+		currPlayer.setPosition(2, 2, board);
 		
-		Solution currSugg = currPlayer.createSuggestion(board);
+		Solution currSugg = currPlayer.makeSuggestion(board);
 		
 		// Testing that the room the ComputerPlayer is in appears in the suggestion created
 		assertEquals(board.getRoom(currPlayer.getRow(), currPlayer.getColumn()).getCard(), currSugg.getRoom());
@@ -55,7 +55,7 @@ public class ComputerAITest {
 		currPlayer.addSeen(new Card("Knife", Card.CardType.WEAPON));
 		currPlayer.addSeen(new Card("Charlie", Card.CardType.PERSON));
 		
-		currSugg = currPlayer.createSuggestion(board);
+		currSugg = currPlayer.makeSuggestion(board);
 		
 		assertEquals(new Card("Jan", Card.CardType.PERSON), currSugg.getPerson());
 		assertEquals(new Card("Hammer", Card.CardType.WEAPON), currSugg.getWeapon());
@@ -65,7 +65,7 @@ public class ComputerAITest {
 	public void selectTargetTest() {
 		ComputerPlayer currPlayer = (ComputerPlayer) board.getPlayers().get(1);
 		
-		currPlayer.setPosition(2, 5);
+		currPlayer.setPosition(2, 5, board);
 		
 		// Roll of 1 includes no rooms
 		board.calcTargets(board.getCell(currPlayer.getRow(), currPlayer.getColumn()), 1);

@@ -56,15 +56,18 @@ public abstract class Player {
 		return null;
 	}
 	
-	public void draw(int height, int width, Graphics g) {
+	public void draw(int height, int width, int offset, double xOffset, Graphics g) {
 		g.setColor(Color.BLACK);
-		g.fillOval((column + 1) * width - 1, (row + 1) * height - 1, width - 1, height - 1);
+		g.fillOval((int) ((column + offset +  xOffset) * width - 1), (row + offset) * height - 1, width - 1, height - 1);
 		g.setColor(getColor());
-		g.fillOval((column + 1) * width, (row + 1) * height, width - 3, height - 3);
+		g.fillOval((int) ((column + offset + xOffset) * width), (row + offset) * height, width - 3, height - 3);
 	}
 	
 	// Abstract method used to update the hand of a Player
 	abstract void updateHand();
+	
+	// Abstract method used to make a suggestion when the Player enters a room
+	abstract Solution makeSuggestion(Board board);
 	
 	// Getters for Player
 	public String getName() {
@@ -100,8 +103,12 @@ public abstract class Player {
 		seen.add(card);
 	}
 	
-	public void setPosition(int row, int column) {
+	public void setPosition(int row, int column, Board board) {
+		board.getCell(this.row, this.column).setOccupied(false);
+		
 		this.row = row;
 		this.column = column;
+		
+		board.getCell(row, column).setOccupied(true);
 	}
 }

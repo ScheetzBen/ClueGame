@@ -125,16 +125,21 @@ public class GameSolutionTest {
 		players[2].addCard(room);
 		
 		// Suggestion that no one can disprove
-		assertEquals(null, board.handleSuggestion(solution, new ComputerPlayer("cTemp", Color.BLACK)));
+		Player tempPlayer = new ComputerPlayer("cTemp", Color.BLACK);
+		board.handleSuggestion(solution, tempPlayer);
+		assertEquals(0, tempPlayer.getSeen().size());
 		
 		// Suggestion that only accusing player can disprove
-		assertEquals(null, board.handleSuggestion(new Solution(person, solution.getWeapon(), solution.getRoom()), players[0]));
+		board.handleSuggestion(new Solution(person, solution.getWeapon(), solution.getRoom()), players[0]);
+		assertEquals(0, players[0].getSeen().size());
 		
 		// Suggestion that only HumanPlayer can disprove
-		assertEquals(person, board.handleSuggestion(new Solution(person, solution.getWeapon(), solution.getRoom()), players[1]));
+		board.handleSuggestion(new Solution(person, solution.getWeapon(), solution.getRoom()), players[1]);
+		assertEquals(1, players[1].getSeen().size());
 		
 		// Suggestion that 2 players can disprove
-		assertEquals(weapon, board.handleSuggestion(new Solution(solution.getPerson(), weapon, room), players[0]));
+		board.handleSuggestion(new Solution(room, weapon, solution.getRoom()), players[2]);
+		assertEquals(1, players[2].getSeen().size());
 		
 		ArrayList<Card> c1Cards = players[1].getCards();
 		// only Card should be weapon which means that handleSuggestion just returned the Card from the first Player which could disprove

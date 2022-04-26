@@ -24,6 +24,11 @@ public class Solution {
 		if (this.room.equals(c.getRoom()) && this.person.equals(c.getPerson()) && this.weapon.equals(c.getWeapon())) return true;
 		else return false;
 	}
+	
+	@Override
+	public String toString() {
+		return person.getCardName() + " with the " + weapon.getCardName() + " in the " + room.getCardName(); 
+	}
 
 	// Getters for Solution
 	public Card getRoom() {

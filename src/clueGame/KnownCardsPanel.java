@@ -41,14 +41,16 @@ public class KnownCardsPanel extends JPanel{
 		
 		panel.setBorder(new TitledBorder(new EtchedBorder(), title));
 		
-		JPanel currPanel = new JPanel(new GridLayout(2, 0));
+		JPanel currPanel = new JPanel();
+		currPanel.setLayout(new GridLayout(2, 0));
 		JLabel label = new JLabel("In Hand:");
 		
 		currPanel.add(label);
 		
 		panel.add(currPanel);
 		
-		currPanel = new JPanel(new GridLayout(2, 0));
+		currPanel = new JPanel();
+		currPanel.setLayout(new GridLayout(2, 0));
 		label = new JLabel("Seen:");
 		
 		currPanel.add(label);
@@ -65,8 +67,12 @@ public class KnownCardsPanel extends JPanel{
 		for (Card card : inHand) {
 			JPanel currPanel = (JPanel) getPanel(card).getComponent(0);
 			
+			currPanel.setLayout(new GridLayout(currPanel.getComponentCount() + 1, 0));
+			
 			currCard = new JTextField();
+			currCard.setEditable(false);
 			currCard.setText(card.getCardName());
+			currCard.setBackground(Color.WHITE);
 			
 			currPanel.add(currCard);
 		}
@@ -78,7 +84,11 @@ public class KnownCardsPanel extends JPanel{
 	// The Color is easy to match to a Player because we can use getColor() on a Player
 	public void addSeenCards(Card seen, Color ownerColor) {
 		JTextField cardName = new JTextField();
+		cardName.setEditable(false);
+		
 		JPanel currPanel = (JPanel) getPanel(seen).getComponent(1);
+		
+		currPanel.setLayout(new GridLayout(currPanel.getComponentCount() + 1, 0));
 		
 		cardName.setText(seen.getCardName());
 		cardName.setBackground(ownerColor);

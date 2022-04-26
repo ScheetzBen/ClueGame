@@ -87,9 +87,11 @@ public class GameControlPanel extends JPanel {
 	}
 	
 	// sets the guess result for the current Player's guess
-	public void setGuessResult(String text) {
+	public void setGuessResult(String text, Color playerColor) {
 		JPanel currPanel = (JPanel) bottomPanel.getComponent(1);
 		JTextField currText = (JTextField) currPanel.getComponent(0);
+		
+		currText.setBackground(playerColor);
 		
 		currText.setText(text);
 		
@@ -98,7 +100,7 @@ public class GameControlPanel extends JPanel {
 	
 	// Called when next is pressed and calls the proper function inside of Board to handle it
 	public void nextPressed() {
-		board.handleTurn(this);
+		board.handleTurn();
 	}
 	
 	// NextListener class calls the proper functions inside of GameControlPanel when the Next button is pressed
@@ -120,6 +122,6 @@ public class GameControlPanel extends JPanel {
 		// test filling in the data
 		panel.setTurn(new ComputerPlayer( "Col. Mustard", Color.ORANGE, 0, 0), 5);
 		panel.setGuess("I have no guess!");
-		panel.setGuessResult( "So you have nothing?");
+		panel.setGuessResult( "So you have nothing?", Color.WHITE);
 	}
 }

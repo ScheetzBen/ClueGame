@@ -25,6 +25,10 @@ import java.util.ArrayList;
 public class Board extends JPanel{
 	// Variables for Board
 	
+	private GameControlPanel gcPanel;
+	
+	private KnownCardsPanel kcPanel;
+	
 	// Initialize a grid array to hold all the cell in the board
 	private BoardCell[][] grid;
 	
@@ -76,8 +80,8 @@ public class Board extends JPanel{
 		cards = new ArrayList<Card>();
 		
 		try {
-			this.loadSetupConfig();
-			this.loadLayoutConfig();
+			theInstance.loadSetupConfig();
+			theInstance.loadLayoutConfig();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (BadConfigFormatException e) {
@@ -102,7 +106,7 @@ public class Board extends JPanel{
 				roomMap.put(array[2].charAt(0), rooms.get(rooms.size() - 1));
 					
 			} else if (array[0].equals("Space")) {
-				roomMap.put(array[2].charAt(0), new Room(array[1], Room.TileType.SPACE, cards.get(cards.size() - 1)));
+				roomMap.put(array[2].charAt(0), new Room(array[1], Room.TileType.SPACE));
 
 			} else if (array[0].equals("Weapon")) {
 				cards.add(new Card(array[1], Card.CardType.WEAPON));
@@ -123,6 +127,8 @@ public class Board extends JPanel{
 			}
 		}
 		in.close();
+		
+		deal();
 	}
 
 	// Properly loads the layout file and sets all BoardCell variables as well as Room centers and labels
@@ -156,13 +162,17 @@ public class Board extends JPanel{
 		// Nested for loop just run for all cells in grid and checks they are a valid Space and sets their DoorDirection;
 		for (int row = 0; row < grid.length; row++) {
 			for(int col = 0; col < grid[row].length; col++) {
-				if (!roomMap.containsKey(rows.get(row)[col].charAt(0))) throw new BadConfigFormatException(layoutConfigFile);
+				char currChar = rows.get(row)[col].charAt(0);
+				
+				if (!roomMap.containsKey(currChar)) throw new BadConfigFormatException(layoutConfigFile);
 
 				grid[row][col] = new BoardCell(row, col, rows.get(row)[col].charAt(0));
+				
+				if (roomMap.get(currChar).getType() != Room.TileType.SPACE) roomMap.get(currChar).addCell(getCell(row, col));
 
 				if (rows.get(row)[col].length() > 1) {
 					char specialType = rows.get(row)[col].charAt(1);
-					BoardCell currCell = this.getCell(row, col);
+					BoardCell currCell = theInstance.getCell(row, col);
 
 					// Switch handles special cell types
 					switch(specialType) {
@@ -197,10 +207,14 @@ public class Board extends JPanel{
 		for (BoardCell[] row : grid) {
 			for(BoardCell cell : row) {
 				if ((getRoom(cell).getType() == Room.TileType.SPACE && cell.getInitial() != 'X') || cell.getSecretPassage() != ' ')
-					cell.setAdjacencies(this);
+					cell.setAdjacencies(theInstance);
 			}
 		}
 		in.close();
+		
+		for (Player player: players) {
+			player.setPosition(player.getRow(), player.getColumn(), theInstance);
+		}
 	}
 	
 	// Deals the cards evenly to all players
@@ -221,6 +235,8 @@ public class Board extends JPanel{
 				if (deck.isEmpty()) break;
 			}
 		}
+		
+		if (kcPanel != null) kcPanel.addHandCards(players.get(0).getCards());
 	}
 	
 	// Helper class to remove code duplication
@@ -269,16 +285,26 @@ public class Board extends JPanel{
 	}
 	
 	// Checks whether any Player can dispute a suggestion
-	public Card handleSuggestion(Solution suggestion, Player accusor) {
+	public void handleSuggestion(Solution suggestion, Player suggestor) {
+		gcPanel.setGuess(suggestion.toString());
+		
 		for (Player player : players) {
-			if (player == accusor) continue;
+			if (player == suggestor) continue;
 			
 			Card tempCard = player.disproveSuggestion(suggestion);
 			
-			if (tempCard != null) return tempCard;
+			if (tempCard != null) {
+				suggestor.addSeen(tempCard);
+				
+				gcPanel.setGuessResult(player.getName() + " Disproves", player.getColor());
+				
+				if (kcPanel != null && suggestor instanceof HumanPlayer) kcPanel.addSeenCards(tempCard, player.getColor());
+				
+				return;
+			}
 		}
 		
-		return null;
+		gcPanel.setGuessResult("No One can Disprove", Color.WHITE);
 	}
 
 	// Method to see whether an accusation is correct
@@ -307,16 +333,24 @@ public class Board extends JPanel{
 					continue;
 				}
 				
-				cell.draw(cellHeight, cellWidth, 1, g, this);
+				cell.draw(cellHeight, cellWidth, 1, g, theInstance);
 			}
 		}
 		
 		for (BoardCell cell : doors) {
-			cell.draw(cellHeight, cellWidth, 1, g, this);
+			cell.draw(cellHeight, cellWidth, 1, g, theInstance);
 		}
 		
 		for (Player player: players) {
-			player.draw(cellHeight, cellWidth, g);
+			double offsetFactor = 0;
+			
+			if (getCell(player.getRow(), player.getColumn()).isRoomCenter()) {
+				for (Player otherPlayer : players.subList(players.indexOf(player), players.size())) {
+					if (otherPlayer != player && player.getRow() == otherPlayer.getRow() && player.getColumn() == otherPlayer.getColumn()) offsetFactor += .5;
+				}
+			}
+			
+			player.draw(cellHeight, cellWidth, 1, offsetFactor, g);
 		}
 		
 		for (var room : rooms) {
@@ -326,7 +360,7 @@ public class Board extends JPanel{
 	}
 	
 	// Method is called when the next button is clicked
-	public void handleTurn(GameControlPanel gcPanel) {
+	public void handleTurn() {
 		Player currPlayer = players.get(playerNum);
 		
 		if (currPlayer instanceof HumanPlayer) {
@@ -355,7 +389,7 @@ public class Board extends JPanel{
 			
 			calcTargets(getCell(currPlayer.getRow(), currPlayer.getColumn()), currRoll);
 			
-			movePlayer(player.selectTarget(getTargets(), this));
+			movePlayer(player.selectTarget(getTargets(), theInstance));
 		}
 	}
 	
@@ -367,6 +401,13 @@ public class Board extends JPanel{
 	// Method is called when the HumanPlayer clicks the board
 	public void handleBoardClick(int x, int y) {
 		for (BoardCell cell: targets) {
+			if (cell.isRoomCenter()) {
+				if (roomMap.get(cell.getInitial()).withinRoom(x, y)) {
+					movePlayer(cell);
+					return;
+				}
+			}
+			
 			if (cell.withinCell(x, y)) {
 				movePlayer(cell);
 				return;
@@ -380,24 +421,36 @@ public class Board extends JPanel{
 	private void movePlayer(BoardCell cell) {
 		Player currPlayer = players.get(playerNum);
 		
-		currPlayer.setPosition(cell.getRow(), cell.getColumn());
+		currPlayer.setPosition(cell.getRow(), cell.getColumn(), theInstance);
 		
-		playerNum = (playerNum + 1) % 5;
+		if (getRoom(cell).getType() != Room.TileType.SPACE) {
+			handleSuggestion(currPlayer.makeSuggestion(theInstance), currPlayer);
+		}
+		
+		playerNum = (playerNum + 1) % players.size();
 		
 		repaint();
 	}
 
 	// Setters for board variables
 	public void setConfigFiles(String layoutConfigFile, String setupConfigFile) {
-		this.layoutConfigFile = new String("data/" + layoutConfigFile);
-		this.setupConfigFile = new String("data/" + setupConfigFile);
+		theInstance.layoutConfigFile = new String("data/" + layoutConfigFile);
+		theInstance.setupConfigFile = new String("data/" + setupConfigFile);
 	}
 	
 	public void setPlayers(Player[] players) {
-		this.players.clear();
+		theInstance.players.clear();
 		
 		for (Player player : players)
-			this.players.add(player);
+			theInstance.players.add(player);
+	}
+	
+	public void setGCPanel(GameControlPanel gcPanel) {
+		this.gcPanel = gcPanel;
+	}
+
+	public void setKCPanel(KnownCardsPanel kcPanel) {
+		this.kcPanel = kcPanel;
 	}
 
 	// Getters for board variables
@@ -439,7 +492,7 @@ public class Board extends JPanel{
 	}
 
 	public Set<BoardCell> getAdjList(int row, int col) {
-		return this.getCell(row, col).getAdjList();
+		return theInstance.getCell(row, col).getAdjList();
 	}
 
 	// Resets the targets and visited sets and returns the targets

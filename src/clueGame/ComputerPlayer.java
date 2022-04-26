@@ -18,7 +18,8 @@ public class ComputerPlayer extends Player{
 	}
 	
 	// Function to randomly make a suggestion based on the Room the ComputerPlayer is in
-	public Solution createSuggestion(Board board) {
+	@Override
+	public Solution makeSuggestion(Board board) {
 		Solution temp = new Solution(null, null, null);
 		
 		while (temp.getPerson() == null || temp.getWeapon() == null) {
@@ -53,8 +54,6 @@ public class ComputerPlayer extends Player{
 	// Abstract method inherited from Player
 	// Not currently implemented
 	@Override
-	void updateHand() {
-		// TODO Auto-generated method stub
-		
+	public void updateHand() {
 	}
 }
