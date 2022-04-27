@@ -42,6 +42,7 @@ public class GameControlPanel extends JPanel {
 		topPanel.add(accusationButton);
 		topPanel.add(nextButton);
 		nextButton.addActionListener(new NextListener());
+		accusationButton.addActionListener(new AccusationListener());
 		
 		bottomPanel.add(etchedBorderPanel("Guess"));
 		bottomPanel.add(etchedBorderPanel("Guess Result"));
@@ -107,6 +108,13 @@ public class GameControlPanel extends JPanel {
 	private class NextListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			nextPressed();
+		}
+	}
+	
+	private class AccusationListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			SuggestionDialog accusationDialog = new SuggestionDialog(board, (HumanPlayer) board.getPlayers().get(0), false);
+			accusationDialog.setVisible(true);
 		}
 	}
 	

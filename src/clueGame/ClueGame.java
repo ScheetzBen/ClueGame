@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.BorderLayout;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ public class ClueGame extends JFrame{
 		bPanel.setConfigFiles("ClueLayout2.csv", "ClueSetup.txt");
 		bPanel.setKCPanel(kcPanel);
 		bPanel.initialize();
+		bPanel.deal();
 		
 		add(bPanel, BorderLayout.CENTER);
 		
@@ -29,6 +31,12 @@ public class ClueGame extends JFrame{
 		add(gcPanel, BorderLayout.SOUTH);
 		
 		bPanel.setGCPanel(gcPanel);
+		bPanel.setClueGame(this);
+	}
+	
+	public void displayIntro() {
+		JOptionPane.showMessageDialog(null, "You are " + bPanel.getPlayers().get(0).getName() + ". Can you find the solution before the Computer players?");
+		bPanel.handleTurn();
 	}
 	
 	public GameControlPanel getGCPanel() {
@@ -42,5 +50,6 @@ public class ClueGame extends JFrame{
 	public static void main(String[] args) {
 		ClueGame game = new ClueGame();
 		game.setVisible(true);
+		game.displayIntro();
 	}
 }

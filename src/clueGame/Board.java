@@ -29,6 +29,8 @@ public class Board extends JPanel{
 	
 	private KnownCardsPanel kcPanel;
 	
+	private ClueGame clueGame;
+	
 	// Initialize a grid array to hold all the cell in the board
 	private BoardCell[][] grid;
 	
@@ -127,8 +129,6 @@ public class Board extends JPanel{
 			}
 		}
 		in.close();
-		
-		deal();
 	}
 
 	// Properly loads the layout file and sets all BoardCell variables as well as Room centers and labels
@@ -286,7 +286,11 @@ public class Board extends JPanel{
 	
 	// Checks whether any Player can dispute a suggestion
 	public void handleSuggestion(Solution suggestion, Player suggestor) {
-		gcPanel.setGuess(suggestion.toString());
+		if (gcPanel != null) gcPanel.setGuess(suggestion.toString());
+		
+		for (Player player : players) {
+			if (player.getName().equals(suggestion.getPerson().getCardName())) player.setPosition(suggestor.getRow(), suggestor.getColumn(), theInstance);
+		}
 		
 		for (Player player : players) {
 			if (player == suggestor) continue;
@@ -296,7 +300,7 @@ public class Board extends JPanel{
 			if (tempCard != null) {
 				suggestor.addSeen(tempCard);
 				
-				gcPanel.setGuessResult(player.getName() + " Disproves", player.getColor());
+				if (gcPanel != null) gcPanel.setGuessResult(player.getName() + " Disproves", player.getColor());
 				
 				if (kcPanel != null && suggestor instanceof HumanPlayer) kcPanel.addSeenCards(tempCard, player.getColor());
 				
@@ -304,7 +308,11 @@ public class Board extends JPanel{
 			}
 		}
 		
-		gcPanel.setGuessResult("No One can Disprove", Color.WHITE);
+		if (gcPanel != null) gcPanel.setGuessResult("No One can Disprove", Color.WHITE);
+		if (suggestor instanceof ComputerPlayer) {
+			ComputerPlayer computer = (ComputerPlayer) suggestor;
+			computer.setAccusation(suggestion);
+		}
 	}
 
 	// Method to see whether an accusation is correct
@@ -424,12 +432,22 @@ public class Board extends JPanel{
 		currPlayer.setPosition(cell.getRow(), cell.getColumn(), theInstance);
 		
 		if (getRoom(cell).getType() != Room.TileType.SPACE) {
-			handleSuggestion(currPlayer.makeSuggestion(theInstance), currPlayer);
+			currPlayer.makeSuggestion(theInstance);
 		}
 		
 		playerNum = (playerNum + 1) % players.size();
 		
 		repaint();
+	}
+	
+	public void handleAccusation(Solution accusation) {
+		if (checkAccusation(accusation)) {
+			if (playerNum == 0) JOptionPane.showMessageDialog(null, "You Won!");
+			else JOptionPane.showMessageDialog(null, players.get(playerNum).getName() + " guessed the right solution. it was " + accusation.toString());
+		} else JOptionPane.showMessageDialog(null, "Sorry that is not correct. You lost!");
+		
+		clueGame.setVisible(false);
+		clueGame.dispose();
 	}
 
 	// Setters for board variables
@@ -451,6 +469,10 @@ public class Board extends JPanel{
 
 	public void setKCPanel(KnownCardsPanel kcPanel) {
 		this.kcPanel = kcPanel;
+	}
+	
+	public void setClueGame(ClueGame clueGame) {
+		this.clueGame = clueGame;
 	}
 
 	// Getters for board variables

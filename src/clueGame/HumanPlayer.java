@@ -13,16 +13,13 @@ public class HumanPlayer extends Player{
 		super(name, color, row, column);
 	}
 	
-	// Abstract method inherited from Player
-	// Not currently implemented
-	@Override
-	void updateHand() {
-		// TODO Auto-generated method stub
-		
+	public void suggestionSubmitted(Board board, Solution suggestion) {
+		board.handleSuggestion(suggestion, this);
 	}
 	
 	@Override
-	public Solution makeSuggestion(Board board) {
-		
+	public void makeSuggestion(Board board) {
+		SuggestionDialog suggestionDialog = new SuggestionDialog(board, this, true);
+		suggestionDialog.setVisible(true);
 	}
 }

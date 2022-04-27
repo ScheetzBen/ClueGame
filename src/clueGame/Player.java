@@ -63,11 +63,8 @@ public abstract class Player {
 		g.fillOval((int) ((column + offset + xOffset) * width), (row + offset) * height, width - 3, height - 3);
 	}
 	
-	// Abstract method used to update the hand of a Player
-	abstract void updateHand();
-	
 	// Abstract method used to make a suggestion when the Player enters a room
-	abstract Solution makeSuggestion(Board board);
+	abstract void makeSuggestion(Board board);
 	
 	// Getters for Player
 	public String getName() {
